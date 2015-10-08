@@ -1,0 +1,23 @@
+This is a list of list of Keywords and Symbols that my mini Pascal complier will recognize. They should all be in the lookup table.
+
+Symbols                                 Keywords
+.                                       program
+,                                       function
+-                                       or
++                                       div
+*                                       mod
+/                                       begin
+(                                       end
+)                                       array
+[                                       if
+]                                       then
+{                                       else
+}                                       while
+<                                       do
+<=                                      and
+>                                       var
+>=                                      int
+=
+:
+:=
+;                           
