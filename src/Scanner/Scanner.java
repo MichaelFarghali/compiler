@@ -39,6 +39,7 @@ public class Scanner {
     
     /////  Constructor
     
+    
     public Scanner( File inputFile) {
         
         FileReader fr = null;
@@ -68,13 +69,14 @@ public class Scanner {
                 // FIXME
             }
             switch( stateNumber) {
+            // Begin reading in the file, exit if file empty (-1)
                 case START:
                     if( currentCharacter == -1) {
                         this.lexeme = "";
                         this.type = null;
                         return( false);
                     }
-                    else if( Character.isLetter( currentCharacter)) {
+                    else if(Character.isLetter(currentCharacter)) {
                         stateNumber = IN_ID_OR_KEYWORD;
                         currentLexeme += (char)currentCharacter;
                     }
@@ -157,7 +159,7 @@ public class Scanner {
             }
             return( true);
         }
-        else if( stateNumber == SYMBOL_COMPLETE) {
+        else if(stateNumber == SYMBOL_COMPLETE) {
             this.type = lookup.get( this.lexeme);
             return( true);
         }
