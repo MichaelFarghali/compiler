@@ -5,7 +5,7 @@ package Scanner;
 
 /**
  * Represents the various types of Tokens in mini pascal.
- * @author steinmee
+ * @author Michael Farghali
  */
 public enum TokenType {
     ID,
