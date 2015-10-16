@@ -1,0 +1,9 @@
+{ This tests an improper comment }
+
+foobar program while >= bar is > dfdfh3435 bdf333 { this is a % # @comment }
+
+here are more legal tokens
+
+{ but this is an % # @ illegal {  comment }
+
+another token
