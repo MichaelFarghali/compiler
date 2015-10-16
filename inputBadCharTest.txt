@@ -1,0 +1,2 @@
+{ This tests a bad character in the input stream. }
+foo bar whosiwhat % percent
