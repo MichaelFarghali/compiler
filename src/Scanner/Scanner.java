@@ -1,10 +1,5 @@
 package Scanner;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 
 import java.io.File;
@@ -26,20 +21,19 @@ public class Scanner {
     private final int ID_COMPLETE = 101;
     private final int SYMBOL_COMPLETE = 102;
     private final int SHORT_SYMBOL_COMPLETE = 103;
+    private final int IN_GREATER_THAN_EQUAL = 2;
+    private final int IN_LESS_THAN_EQUAL = 3;
+    private final int IN_LESS_GREATER_THAN = 4;
+    private final int IN_CURLY_BRACKETS = 5;
+    private final int IN_ASSIGN_OP = 6;
     
     //// Instance Variables
-    
-    private TokenType type;
-    
-    private String lexeme;
-    
-    private PushbackReader input;
-    
+    private TokenType type;    
+    private String lexeme;    
+    private PushbackReader input;    
     private LookupTable lookup = new LookupTable();
     
-    /////  Constructor
-    
-    
+    //Constructor    
     public Scanner( File inputFile) {
         
         FileReader fr = null;
@@ -51,17 +45,19 @@ public class Scanner {
             System.exit(1);
         }
         this.input = new PushbackReader( fr);
-    }
+    }//end constructor    
     
-    
-    //// Methods
-    
+    /**
+     * nextToken() reads in a string one character at a time. 
+     * @return True if string is a valid token in LookUpTable. False otherwise
+     */
     public boolean nextToken() {
         int stateNumber = 0;
         String currentLexeme = "";
         int currentCharacter = 0;
         
-        while( stateNumber < ERROR) {
+        while(stateNumber < ERROR) {
+            // Check that there is input to read in
             try {
                 currentCharacter = input.read();
             }
@@ -69,42 +65,53 @@ public class Scanner {
                 // FIXME
             }
             switch( stateNumber) {
-            // Begin reading in the file, exit if file empty (-1)
+            // Begin reading in the file
                 case START:
+                    // Exit if file is empty
                     if( currentCharacter == -1) {
                         this.lexeme = "";
                         this.type = null;
                         return( false);
                     }
+                    // If the lexeme is a letter go to ID/Keyword state
                     else if(Character.isLetter(currentCharacter)) {
                         stateNumber = IN_ID_OR_KEYWORD;
                         currentLexeme += (char)currentCharacter;
                     }
-                    else if ( Character.isWhitespace( currentCharacter)) {
+                    // If whitespace, do nothing and stay in Start state
+                    else if ( Character.isWhitespace(currentCharacter)) {
                         
                     }
+                    // If lexeme is '+' or '-' set state to SYMBOL_COMPLETE
                     else if( currentCharacter == '+' ||
                              currentCharacter == '-') {
                         stateNumber = SYMBOL_COMPLETE;
                         currentLexeme += (char)currentCharacter;
                     }
+                    // If lexeme '>' set state to 2
                     else if( currentCharacter == '>') {
-                        stateNumber = 2;
+                        stateNumber = IN_GREATER_THAN_EQUAL;
                         currentLexeme += (char)currentCharacter;
                     }
+                    else if( currentCharacter == '<') {
+                        stateNumber = 4;
+                        currentLexeme += (char)currentCharacter;
+                    }
+                    // If lexeme is '{' set state to 3 to check  for '}'
                     else if( currentCharacter == '{') {
-                        stateNumber = 3;
+                        stateNumber = IN_CURLY_BRACKETS;
                     }
                     else {
                         currentLexeme += (char)currentCharacter;
                         stateNumber = ERROR;
                     }
                     break;
+                    
                 case IN_ID_OR_KEYWORD:
                     if( currentCharacter == -1) {
                         stateNumber = ID_COMPLETE;                        
                     }
-                    else if( Character.isLetterOrDigit( currentCharacter)) {
+                    else if( Character.isLetterOrDigit(currentCharacter)) {
                         currentLexeme += (char)currentCharacter;                        
                     }
                     else {
@@ -117,7 +124,7 @@ public class Scanner {
                         stateNumber = ID_COMPLETE;
                     }
                     break;
-                case 2:
+                case IN_GREATER_THAN_EQUAL:
                     if( currentCharacter == '=') {
                         stateNumber = SYMBOL_COMPLETE;
                         currentLexeme += (char)currentCharacter;                        
@@ -132,7 +139,7 @@ public class Scanner {
                         stateNumber = SHORT_SYMBOL_COMPLETE;
                     }
                     break;
-                case 3:
+                case IN_CURLY_BRACKETS:
                     if( currentCharacter == '{') {
                         currentLexeme += (char)currentCharacter;
                         stateNumber = ERROR;
@@ -147,6 +154,7 @@ public class Scanner {
                     
             } // end switch 
         } // end while
+        
         this.lexeme = currentLexeme;
         if( stateNumber == ERROR) {
             this.type = null;
@@ -169,7 +177,7 @@ public class Scanner {
         }
        
         return( false);
-    }
+    } //end nextToken
     
     public TokenType getToken() { return this.type;}
     public String getLexeme() { return this.lexeme;}
