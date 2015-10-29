@@ -21,11 +21,10 @@ public class Scanner {
     private final int ID_COMPLETE = 101;
     private final int SYMBOL_COMPLETE = 102;
     private final int SHORT_SYMBOL_COMPLETE = 103;
-    private final int IN_GREATER_THAN_EQUAL = 2;
-    private final int IN_LESS_THAN_EQUAL = 3;
-    private final int IN_LESS_GREATER_THAN = 4;
-    private final int IN_CURLY_BRACKETS = 5;
-    private final int IN_ASSIGN_OP = 6;
+    private final int IN_GREATER_THAN_EQUALS = 2;
+    private final int IN_LESS_THAN_EQUALS = 3;
+    private final int IN_CURLY_BRACKETS = 4;
+    private final int IN_ASSIGN_OP = 5;
     
     //// Instance Variables
     private TokenType type;    
@@ -88,15 +87,43 @@ public class Scanner {
                         stateNumber = SYMBOL_COMPLETE;
                         currentLexeme += (char)currentCharacter;
                     }
-                    // If lexeme '>' set state to 2
+                    // Check for =, *, or / SYMBOL_COMPLETE
+                     else if( currentCharacter == '=' ||
+                              currentCharacter == '*' ||
+                              currentCharacter == '/') {
+                        stateNumber = SYMBOL_COMPLETE;
+                        currentLexeme += (char)currentCharacter;
+                    }
+                    // Check for '.' ',' ';'
+                    else if( currentCharacter == '.' ||
+                             currentCharacter == ',' ||
+                             currentCharacter == ';') {
+                        stateNumber = SYMBOL_COMPLETE;
+                        currentLexeme += (char)currentCharacter;
+                    }
+                    // Check for parentheses and brackets
+                    else if( currentCharacter == '(' ||
+                             currentCharacter == ')' ||
+                             currentCharacter == '[' ||
+                             currentCharacter == ']'){
+                        stateNumber = SYMBOL_COMPLETE;
+                        currentLexeme += (char)currentCharacter;
+                    }
+                    // If lexeme '>' set state to IN_GREATER_THAN_EQUALS state
                     else if( currentCharacter == '>') {
-                        stateNumber = IN_GREATER_THAN_EQUAL;
+                        stateNumber = IN_GREATER_THAN_EQUALS;
                         currentLexeme += (char)currentCharacter;
                     }
+                    // If lexeme '<' set state to IN_LESS_THAN_EQUALS
                     else if( currentCharacter == '<') {
-                        stateNumber = 4;
+                        stateNumber = IN_LESS_THAN_EQUALS;
                         currentLexeme += (char)currentCharacter;
                     }
+                    // If lexeme ':' set state to IN_ASSIGN_OP
+                    else if( currentCharacter == ':') {
+                        stateNumber = IN_ASSIGN_OP;
+                        currentLexeme += (char)currentCharacter;
+                    }                    
                     // If lexeme is '{' set state to 3 to check  for '}'
                     else if( currentCharacter == '{') {
                         stateNumber = IN_CURLY_BRACKETS;
@@ -124,8 +151,46 @@ public class Scanner {
                         stateNumber = ID_COMPLETE;
                     }
                     break;
-                case IN_GREATER_THAN_EQUAL:
+                case IN_GREATER_THAN_EQUALS:
                     if( currentCharacter == '=') {
+                        stateNumber = SYMBOL_COMPLETE;
+                        currentLexeme += (char)currentCharacter;                        
+                    }
+                    else {
+                        try {
+                            input.unread( currentCharacter);
+                        }
+                        catch( IOException ioe){
+                            // FIXME
+                        }
+                        stateNumber = SHORT_SYMBOL_COMPLETE;
+                    }
+                    break;
+                case IN_LESS_THAN_EQUALS:
+                    if( currentCharacter == '=') {
+                        stateNumber = SYMBOL_COMPLETE;
+                        currentLexeme += (char)currentCharacter;                        
+                    }
+                    else if( currentCharacter == '>') {
+                        stateNumber = SYMBOL_COMPLETE;
+                        currentLexeme += (char)currentCharacter;                        
+                    }
+                    else {
+                        try {
+                            input.unread( currentCharacter);
+                        }
+                        catch( IOException ioe){
+                            // FIXME
+                        }
+                        stateNumber = SHORT_SYMBOL_COMPLETE;
+                    }
+                    break;
+                case IN_ASSIGN_OP:
+                    if( currentCharacter == '=') {
+                        stateNumber = SYMBOL_COMPLETE;
+                        currentLexeme += (char)currentCharacter;                        
+                    }
+                    else if( currentCharacter == '>') {
                         stateNumber = SYMBOL_COMPLETE;
                         currentLexeme += (char)currentCharacter;                        
                     }

@@ -16,8 +16,9 @@ Symbols                                 Keywords
 <                                       do
 <=                                      and
 >                                       var
->=                                      int
-=
+>=                                      integer
+					real
+=					procedure
 :
 :=
 ;                           
