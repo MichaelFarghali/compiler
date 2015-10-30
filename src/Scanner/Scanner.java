@@ -1,7 +1,5 @@
 package Scanner;
 
-
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -13,7 +11,7 @@ import java.io.PushbackReader;
  * @author Michael Farghali
  */
 public class Scanner {
-    
+
     //// Class constants
     private final int START = 0;
     private final int IN_ID_OR_KEYWORD = 1;
@@ -27,150 +25,160 @@ public class Scanner {
     private final int IN_CURLY_BRACKETS = 4;
     private final int IN_ASSIGN_OP = 5;
     private final int IN_DIGIT = 6;
-    
+
     //// Instance Variables
-    private TokenType type;    
-    private String lexeme;    
-    private PushbackReader input;    
+    private TokenType type;
+    private String lexeme;
+    private PushbackReader input;
     private LookupTable lookup = new LookupTable();
-    
+
     //Constructor    
-    public Scanner( File inputFile) {
-        
+    public Scanner(File inputFile) {
+
         FileReader fr = null;
         try {
             fr = new FileReader(inputFile);
-        }
-        catch( FileNotFoundException fnfe) {
+        } catch (FileNotFoundException fnfe) {
             System.out.println("Can't find file " + inputFile + ".");
             System.exit(1);
         }
-        this.input = new PushbackReader( fr);
+        this.input = new PushbackReader(fr);
     }//end constructor    
-    
-    
-    public int getNextChar()
-    {
-        int currentChar = 0;
-        
-        try {
-                currentChar = input.read();
-            }
-            catch( IOException ioe) {
-                // FIXME
-            }
-        
-        return currentChar;
-    }
+
     /**
-     * The nextToken() method reads in a string from a file
-     * one character at a time. 
+     * Reads a single character using PushBackReader from input file and returns
+     * it as an integer. It checks for IOException in try/catch block
+     *
+     * @return int
+     */
+    public int getNextChar() {
+        int currentChar = 0;
+
+        try {
+            currentChar = input.read();
+        } catch (IOException ioe) {
+            // FIXME
+        }
+        return currentChar;
+    } // end getNextChar()
+
+    /**
+     * Unreads a single character using PushBackReader. Checks for IOException
+     * in a try/catch block
+     * @param aChar 
+     */
+    public void pushBackChar(int aChar) {
+        try {
+            input.unread(aChar);
+        } catch (IOException ioe) {
+            // FIXME
+        }
+    }
+
+    /**
+     * The nextToken() method reads in a string from a file one character at a
+     * time.
+     *
      * @return True if string is a valid token in LookUpTable. False otherwise
      */
     public boolean nextToken() {
         int stateNumber = 0;
         String currentLexeme = "";
         int currentCharacter = 0;
-        
-        while(stateNumber < ERROR) {
+
+        while (stateNumber < ERROR) {
             // Get a character
             currentCharacter = getNextChar();
-            switch( stateNumber) {
-            // Begin reading in the file
+            switch (stateNumber) {
+                // Begin reading in the file
                 case START:
                     // Exit if file is empty
-                    if( currentCharacter == -1) {
+                    if (currentCharacter == -1) {
                         this.lexeme = "";
                         this.type = null;
-                        return( false);
-                    }
+                        return (false);
+                    } 
                     // If reads in digit go to IN_DIGIT state
-                     else if(Character.isDigit(currentCharacter)) {
+                    else if (Character.isDigit(currentCharacter)) {
                         stateNumber = IN_DIGIT;
-                        currentLexeme += (char)currentCharacter;
-                    }
-                    
+                        currentLexeme += (char) currentCharacter;
+                    } 
                     // If the lexeme is a letter go to ID/Keyword state
-                    else if(Character.isLetter(currentCharacter)) {
+                    else if (Character.isLetter(currentCharacter)) {
                         stateNumber = IN_ID_OR_KEYWORD;
-                        currentLexeme += (char)currentCharacter;
-                    }
+                        currentLexeme += (char) currentCharacter;
+                    } 
                     // If whitespace, do nothing and stay in Start state
-                    else if ( Character.isWhitespace(currentCharacter)) {
-                        
-                    }
+                    else if (Character.isWhitespace(currentCharacter)) {
+
+                    } 
                     // If lexeme is '+' or '-' set state to SYMBOL_COMPLETE
-                    else if( currentCharacter == '+' ||
-                             currentCharacter == '-') {
+                    else if (currentCharacter == '+'
+                            || currentCharacter == '-') {
                         stateNumber = SYMBOL_COMPLETE;
-                        currentLexeme += (char)currentCharacter;
-                    }
+                        currentLexeme += (char) currentCharacter;
+                    } 
                     // Check for =, *, or / SYMBOL_COMPLETE
-                     else if( currentCharacter == '=' ||
-                              currentCharacter == '*' ||
-                              currentCharacter == '/') {
+                    else if (currentCharacter == '='
+                            || currentCharacter == '*'
+                            || currentCharacter == '/') {
                         stateNumber = SYMBOL_COMPLETE;
-                        currentLexeme += (char)currentCharacter;
-                    }
+                        currentLexeme += (char) currentCharacter;
+                    } 
                     // Check for '.' ',' ';'
-                    else if( currentCharacter == '.' ||
-                             currentCharacter == ',' ||
-                             currentCharacter == ';') {
+                    else if (currentCharacter == '.'
+                            || currentCharacter == ','
+                            || currentCharacter == ';') {
                         stateNumber = SYMBOL_COMPLETE;
-                        currentLexeme += (char)currentCharacter;
-                    }
+                        currentLexeme += (char) currentCharacter;
+                    } 
                     // Check for parentheses and brackets
-                    else if( currentCharacter == '(' ||
-                             currentCharacter == ')' ||
-                             currentCharacter == '[' ||
-                             currentCharacter == ']'){
+                    else if (currentCharacter == '('
+                            || currentCharacter == ')'
+                            || currentCharacter == '['
+                            || currentCharacter == ']') {
                         stateNumber = SYMBOL_COMPLETE;
-                        currentLexeme += (char)currentCharacter;
-                    }
+                        currentLexeme += (char) currentCharacter;
+                    } 
                     // If lexeme '>' set state to IN_GREATER_THAN_EQUALS state
-                    else if( currentCharacter == '>') {
+                    else if (currentCharacter == '>') {
                         stateNumber = IN_GREATER_THAN_EQUALS;
-                        currentLexeme += (char)currentCharacter;
-                    }
+                        currentLexeme += (char) currentCharacter;
+                    } 
                     // If lexeme '<' set state to IN_LESS_THAN_EQUALS
-                    else if( currentCharacter == '<') {
+                    else if (currentCharacter == '<') {
                         stateNumber = IN_LESS_THAN_EQUALS;
-                        currentLexeme += (char)currentCharacter;
-                    }
+                        currentLexeme += (char) currentCharacter;
+                    } 
                     // If lexeme ':' set state to IN_ASSIGN_OP
-                    else if( currentCharacter == ':') {
+                    else if (currentCharacter == ':') {
                         stateNumber = IN_ASSIGN_OP;
-                        currentLexeme += (char)currentCharacter;
-                    }                    
+                        currentLexeme += (char) currentCharacter;
+                    } 
                     // If lexeme is '{' set state to 3 to check  for '}'
-                    else if( currentCharacter == '{') {
+                    else if (currentCharacter == '{') {
                         stateNumber = IN_CURLY_BRACKETS;
                     }
                     // For anything else go to ERROR state
                     else {
-                        currentLexeme += (char)currentCharacter;
+                        currentLexeme += (char) currentCharacter;
                         stateNumber = ERROR;
                     }
                     break;
                 // Read in additional characters or digits until a string has
                 // been read in and then go to ID_COMPLETE state
                 case IN_ID_OR_KEYWORD:
-                    // If EOF is reached the ID  is complete
-                    if( currentCharacter == -1) {
-                        stateNumber = ID_COMPLETE;                        
-                    }
+                    // If EOF is reached the ID is complete
+                    if (currentCharacter == -1) {
+                        stateNumber = ID_COMPLETE;
+                    } 
                     // Read in more letters or digits
-                    else if( Character.isLetterOrDigit(currentCharacter)) {
-                        currentLexeme += (char)currentCharacter;                        
+                    else if (Character.isLetterOrDigit(currentCharacter)) {
+                        currentLexeme += (char) currentCharacter;
                     }
                     // Pushback the last read character
                     else {
-                        try {
-                            input.unread( currentCharacter);
-                        }
-                        catch( IOException ioe){
-                            // FIXME
-                        }
+                        pushBackChar(currentCharacter);                       
                         stateNumber = ID_COMPLETE;
                     }
                     break;
@@ -178,17 +186,11 @@ public class Scanner {
                 // If '>=' go to SYMBOL_COMPLETE state. If not '>=' unread
                 // current lexeme and go to short symbol complete state as '>'
                 case IN_GREATER_THAN_EQUALS:
-                    if( currentCharacter == '=') {
+                    if (currentCharacter == '=') {
                         stateNumber = SYMBOL_COMPLETE;
-                        currentLexeme += (char)currentCharacter;                        
-                    }
-                    else {
-                        try {
-                            input.unread( currentCharacter);
-                        }
-                        catch( IOException ioe){
-                            // FIXME
-                        }
+                        currentLexeme += (char) currentCharacter;
+                    } else {
+                        pushBackChar(currentCharacter);
                         stateNumber = SHORT_SYMBOL_COMPLETE;
                     }
                     break;
@@ -196,21 +198,16 @@ public class Scanner {
                 // If '<=' or '<>' go to SYMBOL_COMPLETE state. If not unread
                 // current lexeme and go to short symbol complete state as '<'
                 case IN_LESS_THAN_EQUALS:
-                    if( currentCharacter == '=') {
+                    if (currentCharacter == '=') {
                         stateNumber = SYMBOL_COMPLETE;
-                        currentLexeme += (char)currentCharacter;                        
-                    }
-                    else if( currentCharacter == '>') {
+                        currentLexeme += (char) currentCharacter;
+                    } 
+                    else if (currentCharacter == '>') {
                         stateNumber = SYMBOL_COMPLETE;
-                        currentLexeme += (char)currentCharacter;                        
+                        currentLexeme += (char) currentCharacter;
                     }
                     else {
-                        try {
-                            input.unread( currentCharacter);
-                        }
-                        catch( IOException ioe){
-                            // FIXME
-                        }
+                        pushBackChar(currentCharacter);                       
                         stateNumber = SHORT_SYMBOL_COMPLETE;
                     }
                     break;
@@ -218,33 +215,25 @@ public class Scanner {
                 // If ':=' is read go to complete state. If any other lexeme
                 // unread the character and go to short symbol complete state
                 case IN_ASSIGN_OP:
-                    if( currentCharacter == '=') {
+                    if (currentCharacter == '=') {
                         stateNumber = SYMBOL_COMPLETE;
-                        currentLexeme += (char)currentCharacter;                        
-                    }
-                    
+                        currentLexeme += (char) currentCharacter;
+                    } 
                     else {
-                        try {
-                            input.unread( currentCharacter);
-                        }
-                        catch( IOException ioe){
-                            // FIXME
-                        }
+                        pushBackChar(currentCharacter);
                         stateNumber = SHORT_SYMBOL_COMPLETE;
                     }
-                    break;   
+                    break;
                 // For comments in code using {}. If {} are not balanced go
                 // to ERROR state. 
                 case IN_CURLY_BRACKETS:
                     //Check that there aren't two open '{'
-                    if( currentCharacter == '{') {
-                        currentLexeme += (char)currentCharacter;
+                    if (currentCharacter == '{') {
+                        currentLexeme += (char) currentCharacter;
                         stateNumber = ERROR;
-                    }
-                    else if(currentCharacter == '}') {
+                    } else if (currentCharacter == '}') {
                         stateNumber = 0;
-                    }
-                    else {
+                    } else {
                         // Stay in the comment state 3
                     }
                     break;
@@ -252,61 +241,54 @@ public class Scanner {
                 // found such as "1." "10E", "10E+", "123VariableName"
                 case IN_DIGIT:
                     // If EOF is reached the ID  is complete
-                    if( currentCharacter == -1) {
-                        stateNumber = ID_COMPLETE;                        
+                    if (currentCharacter == -1) {
+                        stateNumber = ID_COMPLETE;
                     }
-                    if( currentCharacter == 'e' ||
-                        currentCharacter == 'E'){
-                        
-                        currentLexeme += (char)currentCharacter;
-                        
-                    }
-                    // Read in more digits
-                    else if( Character.isDigit(currentCharacter)) {
-                        currentLexeme += (char)currentCharacter;                        
-                    }
-                    // Pushback the last read character
+                    if (currentCharacter == 'e'
+                            || currentCharacter == 'E') {
+
+                        currentLexeme += (char) currentCharacter;
+
+                    } // Read in more digits
+                    else if (Character.isDigit(currentCharacter)) {
+                        currentLexeme += (char) currentCharacter;
+                    } // Pushback the last read character
                     else {
-                        try {
-                            input.unread( currentCharacter);
-                        }
-                        catch( IOException ioe){
-                            // FIXME
-                        }
+                        pushBackChar(currentCharacter);
                         stateNumber = ID_COMPLETE;
                     }
                     break;
-                    
+
             } // end switch 
         } // end while
-        
+
         this.lexeme = currentLexeme;
-        if( stateNumber == ERROR) {
+        if (stateNumber == ERROR) {
             this.type = null;
-            return( false);
-        }
-        else if( stateNumber == ID_COMPLETE) {
-            this.type = lookup.get( this.lexeme);
-            if( this.type == null) {
+            return (false);
+        } else if (stateNumber == ID_COMPLETE) {
+            this.type = lookup.get(this.lexeme);
+            if (this.type == null) {
                 this.type = TokenType.ID;
             }
-            return( true);
+            return (true);
+        } else if (stateNumber == SYMBOL_COMPLETE) {
+            this.type = lookup.get(this.lexeme);
+            return (true);
+        } else if (stateNumber == SHORT_SYMBOL_COMPLETE) {
+            this.type = lookup.get(this.lexeme);
+            return (true);
         }
-        else if(stateNumber == SYMBOL_COMPLETE) {
-            this.type = lookup.get( this.lexeme);
-            return( true);
-        }
-        else if( stateNumber == SHORT_SYMBOL_COMPLETE) {
-            this.type = lookup.get( this.lexeme);
-            return( true);
-        }
-       
-        return( false);
+
+        return (false);
     } //end nextToken
-    
-    public TokenType getToken() { return this.type;}
-    public String getLexeme() { return this.lexeme;}
-    
-    
-    
+
+    public TokenType getToken() {
+        return this.type;
+    }
+
+    public String getLexeme() {
+        return this.lexeme;
+    }
+
 }
