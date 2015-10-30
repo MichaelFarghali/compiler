@@ -19,9 +19,10 @@ public class Scanner {
     private final int ID_COMPLETE = 101;
     private final int SYMBOL_COMPLETE = 102;
     private final int SHORT_SYMBOL_COMPLETE = 103;
-    private final int NUMBER_COMPLETE = 104;
+    private final int INTEGER_COMPLETE = 104;
+    private final int REAL_COMPLETE = 105;
     private final int IN_GREATER_THAN_EQUALS = 2;
-    private final int IN_LESS_THAN_EQUALS = 3;
+    private final int IN_LESS_THAN_EQUALS = 3; // Also handles the <> operator
     private final int IN_CURLY_BRACKETS = 4;
     private final int IN_ASSIGN_OP = 5;
     private final int IN_DIGIT = 6;
@@ -65,7 +66,7 @@ public class Scanner {
     /**
      * Unreads a single character using PushBackReader. Checks for IOException
      * in a try/catch block
-     * @param aChar 
+     * @param aChar A single character to be pushed back into the file stream
      */
     public void pushBackChar(int aChar) {
         try {
@@ -85,6 +86,8 @@ public class Scanner {
         int stateNumber = 0;
         String currentLexeme = "";
         int currentCharacter = 0;
+        boolean realNumFound = false;
+        boolean symbolAlreadyFound = false;
 
         while (stateNumber < ERROR) {
             // Get a character
@@ -176,7 +179,7 @@ public class Scanner {
                     else if (Character.isLetterOrDigit(currentCharacter)) {
                         currentLexeme += (char) currentCharacter;
                     }
-                    // Pushback the last read character
+                    // Pushback character when it is not number or digit
                     else {
                         pushBackChar(currentCharacter);                       
                         stateNumber = ID_COMPLETE;
@@ -240,22 +243,67 @@ public class Scanner {
                 // Read in digits until ID is complete or an invalid number is 
                 // found such as "1." "10E", "10E+", "123VariableName"
                 case IN_DIGIT:
-                    // If EOF is reached the ID  is complete
+                    // If EOF is reached the number  is complete
+                    
                     if (currentCharacter == -1) {
-                        stateNumber = ID_COMPLETE;
+                        stateNumber = INTEGER_COMPLETE;
                     }
-                    if (currentCharacter == 'e'
-                            || currentCharacter == 'E') {
-
+                    if (currentCharacter == '.' && symbolAlreadyFound){
+                        stateNumber = ERROR;
+                    }
+                    if (currentCharacter == 'e' && symbolAlreadyFound){
+                        stateNumber = ERROR;
+                    }
+                        
+                    if (currentCharacter == '.'){
                         currentLexeme += (char) currentCharacter;
-
-                    } // Read in more digits
-                    else if (Character.isDigit(currentCharacter)) {
+                        realNumFound = true;
+                        symbolAlreadyFound = true;
+                        currentCharacter = getNextChar();
+                        if (!Character.isDigit(currentCharacter)){
+                            stateNumber = ERROR;
+                        }              
+                        else {
+                            currentLexeme += (char) currentCharacter;
+                        }
+                    }
+                    //else if (currentCharacter == '.' )
+                    if (currentCharacter == 'e'){
                         currentLexeme += (char) currentCharacter;
-                    } // Pushback the last read character
+                        realNumFound = true;
+                        symbolAlreadyFound = true;
+                        currentCharacter = getNextChar();
+                        if (currentCharacter == '+' ||
+                            currentCharacter == '-'){
+                            currentLexeme += (char) currentCharacter;
+                            currentCharacter = getNextChar();
+                            if (!Character.isDigit(currentCharacter)){
+                                stateNumber = ERROR;
+                            }
+                            else {
+                                currentLexeme += (char) currentCharacter;
+                            }
+                        }  
+                        else if(Character.isDigit(currentCharacter))
+                            currentLexeme += (char) currentCharacter;
+                        else
+                            stateNumber = ERROR;
+                    }
+                    else if (Character.isLetter(currentCharacter)){
+                        stateNumber = ERROR;
+                    }
+                    else if (Character.isDigit(currentCharacter)){
+                        currentLexeme += (char) currentCharacter;
+                    }
+                    
                     else {
                         pushBackChar(currentCharacter);
-                        stateNumber = ID_COMPLETE;
+                        if (realNumFound){
+                            stateNumber = REAL_COMPLETE;
+                            realNumFound = false; }
+                        else{
+                            stateNumber = INTEGER_COMPLETE;}
+                        
                     }
                     break;
 
@@ -277,6 +325,14 @@ public class Scanner {
             return (true);
         } else if (stateNumber == SHORT_SYMBOL_COMPLETE) {
             this.type = lookup.get(this.lexeme);
+            return (true);
+        }
+        else if(stateNumber == INTEGER_COMPLETE){
+            this.type = lookup.get("integer");
+            return (true);
+        }
+        else if(stateNumber == REAL_COMPLETE){
+            this.type = lookup.get("real");
             return (true);
         }
 
