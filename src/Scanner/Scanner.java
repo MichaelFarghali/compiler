@@ -21,10 +21,12 @@ public class Scanner {
     private final int ID_COMPLETE = 101;
     private final int SYMBOL_COMPLETE = 102;
     private final int SHORT_SYMBOL_COMPLETE = 103;
+    private final int NUMBER_COMPLETE = 104;
     private final int IN_GREATER_THAN_EQUALS = 2;
     private final int IN_LESS_THAN_EQUALS = 3;
     private final int IN_CURLY_BRACKETS = 4;
     private final int IN_ASSIGN_OP = 5;
+    private final int IN_DIGIT = 6;
     
     //// Instance Variables
     private TokenType type;    
@@ -46,8 +48,23 @@ public class Scanner {
         this.input = new PushbackReader( fr);
     }//end constructor    
     
+    
+    public int getNextChar()
+    {
+        int currentChar = 0;
+        
+        try {
+                currentChar = input.read();
+            }
+            catch( IOException ioe) {
+                // FIXME
+            }
+        
+        return currentChar;
+    }
     /**
-     * nextToken() reads in a string one character at a time. 
+     * The nextToken() method reads in a string from a file
+     * one character at a time. 
      * @return True if string is a valid token in LookUpTable. False otherwise
      */
     public boolean nextToken() {
@@ -56,13 +73,8 @@ public class Scanner {
         int currentCharacter = 0;
         
         while(stateNumber < ERROR) {
-            // Check that there is input to read in
-            try {
-                currentCharacter = input.read();
-            }
-            catch( IOException ioe) {
-                // FIXME
-            }
+            // Get a character
+            currentCharacter = getNextChar();
             switch( stateNumber) {
             // Begin reading in the file
                 case START:
@@ -72,6 +84,12 @@ public class Scanner {
                         this.type = null;
                         return( false);
                     }
+                    // If reads in digit go to IN_DIGIT state
+                     else if(Character.isDigit(currentCharacter)) {
+                        stateNumber = IN_DIGIT;
+                        currentLexeme += (char)currentCharacter;
+                    }
+                    
                     // If the lexeme is a letter go to ID/Keyword state
                     else if(Character.isLetter(currentCharacter)) {
                         stateNumber = IN_ID_OR_KEYWORD;
@@ -128,19 +146,24 @@ public class Scanner {
                     else if( currentCharacter == '{') {
                         stateNumber = IN_CURLY_BRACKETS;
                     }
+                    // For anything else go to ERROR state
                     else {
                         currentLexeme += (char)currentCharacter;
                         stateNumber = ERROR;
                     }
                     break;
-                    
+                // Read in additional characters or digits until a string has
+                // been read in and then go to ID_COMPLETE state
                 case IN_ID_OR_KEYWORD:
+                    // If EOF is reached the ID  is complete
                     if( currentCharacter == -1) {
                         stateNumber = ID_COMPLETE;                        
                     }
+                    // Read in more letters or digits
                     else if( Character.isLetterOrDigit(currentCharacter)) {
                         currentLexeme += (char)currentCharacter;                        
                     }
+                    // Pushback the last read character
                     else {
                         try {
                             input.unread( currentCharacter);
@@ -151,6 +174,9 @@ public class Scanner {
                         stateNumber = ID_COMPLETE;
                     }
                     break;
+                // When '>' is read check if next symbol is '='
+                // If '>=' go to SYMBOL_COMPLETE state. If not '>=' unread
+                // current lexeme and go to short symbol complete state as '>'
                 case IN_GREATER_THAN_EQUALS:
                     if( currentCharacter == '=') {
                         stateNumber = SYMBOL_COMPLETE;
@@ -166,6 +192,9 @@ public class Scanner {
                         stateNumber = SHORT_SYMBOL_COMPLETE;
                     }
                     break;
+                // When '<' is read check if next symbol is '=' or '>'
+                // If '<=' or '<>' go to SYMBOL_COMPLETE state. If not unread
+                // current lexeme and go to short symbol complete state as '<'
                 case IN_LESS_THAN_EQUALS:
                     if( currentCharacter == '=') {
                         stateNumber = SYMBOL_COMPLETE;
@@ -185,15 +214,15 @@ public class Scanner {
                         stateNumber = SHORT_SYMBOL_COMPLETE;
                     }
                     break;
+                // If a ':' was read in check if next lexeme is an '='
+                // If ':=' is read go to complete state. If any other lexeme
+                // unread the character and go to short symbol complete state
                 case IN_ASSIGN_OP:
                     if( currentCharacter == '=') {
                         stateNumber = SYMBOL_COMPLETE;
                         currentLexeme += (char)currentCharacter;                        
                     }
-                    else if( currentCharacter == '>') {
-                        stateNumber = SYMBOL_COMPLETE;
-                        currentLexeme += (char)currentCharacter;                        
-                    }
+                    
                     else {
                         try {
                             input.unread( currentCharacter);
@@ -203,8 +232,11 @@ public class Scanner {
                         }
                         stateNumber = SHORT_SYMBOL_COMPLETE;
                     }
-                    break;
+                    break;   
+                // For comments in code using {}. If {} are not balanced go
+                // to ERROR state. 
                 case IN_CURLY_BRACKETS:
+                    //Check that there aren't two open '{'
                     if( currentCharacter == '{') {
                         currentLexeme += (char)currentCharacter;
                         stateNumber = ERROR;
@@ -214,6 +246,34 @@ public class Scanner {
                     }
                     else {
                         // Stay in the comment state 3
+                    }
+                    break;
+                // Read in digits until ID is complete or an invalid number is 
+                // found such as "1." "10E", "10E+", "123VariableName"
+                case IN_DIGIT:
+                    // If EOF is reached the ID  is complete
+                    if( currentCharacter == -1) {
+                        stateNumber = ID_COMPLETE;                        
+                    }
+                    if( currentCharacter == 'e' ||
+                        currentCharacter == 'E'){
+                        
+                        currentLexeme += (char)currentCharacter;
+                        
+                    }
+                    // Read in more digits
+                    else if( Character.isDigit(currentCharacter)) {
+                        currentLexeme += (char)currentCharacter;                        
+                    }
+                    // Pushback the last read character
+                    else {
+                        try {
+                            input.unread( currentCharacter);
+                        }
+                        catch( IOException ioe){
+                            // FIXME
+                        }
+                        stateNumber = ID_COMPLETE;
                     }
                     break;
                     
