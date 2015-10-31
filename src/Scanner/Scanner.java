@@ -262,12 +262,13 @@ public class Scanner {
                         currentCharacter = getNextChar();
                         if (!Character.isDigit(currentCharacter)){
                             stateNumber = ERROR;
+                            System.out.println("int error");
+                            System.out.println((char)currentCharacter);
+                            break;
                         }              
-                        else {
-                            currentLexeme += (char) currentCharacter;
-                        }
+                        
                     }
-                    //else if (currentCharacter == '.' )
+                    
                     if (currentCharacter == 'e'){
                         currentLexeme += (char) currentCharacter;
                         realNumFound = true;
@@ -279,6 +280,9 @@ public class Scanner {
                             currentCharacter = getNextChar();
                             if (!Character.isDigit(currentCharacter)){
                                 stateNumber = ERROR;
+                                System.out.println("error");
+                                System.out.println(stateNumber);
+                                System.out.println(currentCharacter);
                             }
                             else {
                                 currentLexeme += (char) currentCharacter;
