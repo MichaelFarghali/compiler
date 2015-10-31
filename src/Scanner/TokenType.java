@@ -2,7 +2,7 @@ package Scanner;
 
 
 /**
- * Represents the various types of Tokens in mini pascal.
+ * A list of all possible Tokens in mini pascal compiler as type enum
  * @author Michael Farghali
  */
 public enum TokenType {

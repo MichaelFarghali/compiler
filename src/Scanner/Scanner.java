@@ -33,7 +33,12 @@ public class Scanner {
     private PushbackReader input;
     private LookupTable lookup = new LookupTable();
 
-    //Constructor    
+    /**
+     * The Scanner constructor opens up the specified file. If input file not
+     * found it exits with an error message. An instance of Java's built-in 
+     * PushBackReader is initialized with the FileReader
+     * @param inputFile The program file to be scanned.
+     */
     public Scanner(File inputFile) {
 
         FileReader fr = null;
@@ -50,15 +55,16 @@ public class Scanner {
      * Reads a single character using PushBackReader from input file and returns
      * it as an integer. It checks for IOException in try/catch block
      *
-     * @return int
+     * @return int The next character in input stream.
      */
     public int getNextChar() {
         int currentChar = 0;
-
+        // Check for IOException
         try {
             currentChar = input.read();
         } catch (IOException ioe) {
-            // FIXME
+            System.out.println("There was a problem reading from file");
+            System.exit(1);
         }
         return currentChar;
     } // end getNextChar()
@@ -69,10 +75,13 @@ public class Scanner {
      * @param aChar A single character to be pushed back into the file stream
      */
     public void pushBackChar(int aChar) {
+        // Check for IOException
         try {
             input.unread(aChar);
         } catch (IOException ioe) {
-            // FIXME
+            System.out.println("There was an error pushing " + aChar + 
+                    " back into the file stream.");
+            System.exit(1);
         }
     }
 
@@ -243,22 +252,27 @@ public class Scanner {
                 // Read in digits until ID is complete or an invalid number is 
                 // found such as "1." "10E", "10E+", "123VariableName"
                 case IN_DIGIT:
-                    // If EOF is reached the number  is complete
-                    
+                    // If EOF is reached the number  is complete                    
                     if (currentCharacter == -1) {
                         stateNumber = INTEGER_COMPLETE;
                     }
+                    //Check that '.' hasn't already been read for current number
                     if (currentCharacter == '.' && symbolAlreadyFound){
                         stateNumber = ERROR;
                     }
+                    //Check 'e' hasn't already been read for current number
                     if (currentCharacter == 'e' && symbolAlreadyFound){
                         stateNumber = ERROR;
                     }
-                        
+                    // Handle decimal numbers   
                     if (currentCharacter == '.'){
                         currentLexeme += (char) currentCharacter;
-                        realNumFound = true;
+                        //Update trackers of occurance of '.'
+                        realNumFound = true; 
                         symbolAlreadyFound = true;
+                        //Get next character if is is anything other than a 
+                        //digit after '.' go to ERROR state and break 
+                        //from switch statement
                         currentCharacter = getNextChar();
                         if (!Character.isDigit(currentCharacter)){
                             currentLexeme += (char) currentCharacter;
@@ -267,35 +281,43 @@ public class Scanner {
                         }              
                         
                     }
-                    
+                    // Handle scientific notation numbers
                     if (currentCharacter == 'e'){
                         currentLexeme += (char) currentCharacter;
+                        //Update trackers of 'e' as being read in
                         realNumFound = true;
                         symbolAlreadyFound = true;
+                        //Get next character after 'e'
                         currentCharacter = getNextChar();
+                        // Check if '+' or '-'
                         if (currentCharacter == '+' ||
                             currentCharacter == '-'){
                             currentLexeme += (char) currentCharacter;
                             currentCharacter = getNextChar();
+                            // Check that next character is a digit or ERROR
                             if (!Character.isDigit(currentCharacter)){
                                 stateNumber = ERROR;
-                            }
+                            } // Or read in digit
                             else {
                                 currentLexeme += (char) currentCharacter;
                             }
                         }  
+                        // Keep reading in digits until token complete or ERROR
                         else if(Character.isDigit(currentCharacter))
                             currentLexeme += (char) currentCharacter;
                         else
                             stateNumber = ERROR;
                     }
+                    // Check for ID names that illegaly start with number
                     else if (Character.isLetter(currentCharacter)){
                         stateNumber = ERROR;
                     }
+                    // Keep reading in more digits for int
                     else if (Character.isDigit(currentCharacter)){
                         currentLexeme += (char) currentCharacter;
                     }
-                    
+                    // For anything else push it back into file stream and 
+                    // go to real or integer complete state
                     else {
                         pushBackChar(currentCharacter);
                         if (realNumFound){
@@ -309,7 +331,8 @@ public class Scanner {
 
             } // end switch 
         } // end while
-
+        // Get the completed string and check the final state number to 
+        // get the correct Token identifier
         this.lexeme = currentLexeme;
         if (stateNumber == ERROR) {
             this.type = null;
