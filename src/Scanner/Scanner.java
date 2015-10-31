@@ -261,9 +261,8 @@ public class Scanner {
                         symbolAlreadyFound = true;
                         currentCharacter = getNextChar();
                         if (!Character.isDigit(currentCharacter)){
+                            currentLexeme += (char) currentCharacter;
                             stateNumber = ERROR;
-                            System.out.println("int error");
-                            System.out.println((char)currentCharacter);
                             break;
                         }              
                         
@@ -280,9 +279,6 @@ public class Scanner {
                             currentCharacter = getNextChar();
                             if (!Character.isDigit(currentCharacter)){
                                 stateNumber = ERROR;
-                                System.out.println("error");
-                                System.out.println(stateNumber);
-                                System.out.println(currentCharacter);
                             }
                             else {
                                 currentLexeme += (char) currentCharacter;
