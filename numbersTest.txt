@@ -1,0 +1,12 @@
+{This file is used to test for both valid and invalid numbers.}
+
+1234
+7.123
+10e5
+10e+5
+10e-5
+1.
+10e5e5
+10e5++5
+10e--5
+.5
