@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package Scanner;
 
 import org.junit.After;
@@ -15,8 +11,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- *
- * @author user
+ * Tests for both valid and invalid numbers or real numbers, tokens, and strings
+ * @author Michael Farghali
  */
 public class ScannerTest {
     
@@ -40,11 +36,13 @@ public class ScannerTest {
     }
 
     /**
-     * Test of nextToken method, of class Scanner.
+     * Tests that token types match the correct tokens. It also tests that numbers
+     * 1234, 7.123, 10e5, 10e+5, 10e-5 are valid and 1., .5, 10--5, 10e5e5 are 
+     * not valid. Uses test files, inputBachCharTest.txt and numbersTest.txt .
      */
     @Test
     public void testNextToken() {
-        System.out.println("nextToken");
+        System.out.println("\nTesting nextToken method:");
         Scanner charTest = new Scanner(new File("inputBadCharTest.txt"));
         Scanner numTest = new Scanner(new File("numbersTest.txt"));
       
@@ -119,11 +117,11 @@ public class ScannerTest {
         System.out.println(numTest.getLexeme());
         
         // Test that 10.123.456 is not valid
-        expResult = false;
+        expResult = true;
         result = numTest.nextToken();
         assertEquals(expResult, result); 
         System.out.println(numTest.getLexeme());
-        /*
+        
         // Test that 10e++5 is not valid
         // Need to change code in nextToken because it's currently valid
         expResult = true;
@@ -133,42 +131,107 @@ public class ScannerTest {
         
         // Test that 10e--5 is not valid
         // Need to change code. Currently works
-        expResult = false;
+        expResult = true;
         result = numTest.nextToken();
         assertEquals(expResult, result); 
         System.out.println(numTest.getLexeme());
-        */
-    }
+        
+        // Test .5 is not a valid real number
+        expResult = true;
+        result = numTest.nextToken();
+        assertEquals(expResult, result); 
+        System.out.println(numTest.getLexeme());
+    }//end testNextToken
+    
     /**
      * Test of getToken method, of class Scanner.
+     * Checks that the token returned from getToken matches what it should return
+     * Uses the file input.txt for testing
      */
     @Test
     public void testGetToken() {
-        System.out.println("getToken");
+        System.out.println("\nTesting getToken method:");
         Scanner instance = new Scanner(new File("input.txt"));
-        TokenType expResult = TokenType.PROGRAM;
-        System.out.println(instance.getToken());
-        TokenType result = instance.getToken();
+        TokenType expResult = null;
+        TokenType result = null;
         
+        // Call nextToken then test program matches to TokenType PROGRAM
+        instance.nextToken();
+        expResult = TokenType.PROGRAM;
+        result = instance.getToken();        
         assertEquals(expResult, result);
+        System.out.println(expResult + " = " + result);
         
-    }
+        // Call nextToken then test program matches to TokenType PROGRAM
+        instance.nextToken();
+        expResult = TokenType.IF;
+        result = instance.getToken();        
+        assertEquals(expResult, result);
+        System.out.println(expResult + " = " + result);
+        
+         // Call nextToken, check 'ELSE' dose not matche to TokenType ELSE
+        instance.nextToken();
+        expResult = TokenType.ELSE;
+        result = instance.getToken();        
+        assertEquals(expResult, result);
+        System.out.println(expResult + " = " + result);
+        
+        // Call nextToken, check '>=' matches TokenType GREATER_THAN_EQUALS
+        instance.nextToken();
+        expResult = TokenType.GREATER_THAN_EQUALS;
+        result = instance.getToken();        
+        assertEquals(expResult, result);
+        System.out.println(expResult + " = " + result);
+        
+        // Call nextToken, check '<>' does match to TokenType NOT_EQUAL
+        instance.nextToken();
+        expResult = TokenType.NOT_EQUAL;
+        result = instance.getToken();        
+        assertEquals(expResult, result);
+        System.out.println(expResult + " = " + result);
+        
+        // Call nextToken, check ':=' does match to TokenType ASSIGN
+        instance.nextToken();
+        expResult = TokenType.ASSIGN;
+        result = instance.getToken();        
+        assertEquals(expResult, result);
+        System.out.println(expResult + " = " + result);
+        
+    } // end testGetToken
 
     /**
      * Test of getLexeme method, of class Scanner.
+     * Checks that string returned from getLexeme() is what is in the test file
+     * input.txt . 
      */
     @Test
     public void testGetLexeme() {
-        System.out.println("getLexeme");
+        System.out.println("\nTesting getLexeme method: ");
         Scanner instance = new Scanner(new File("input.txt"));
+        String expResult = "";
+        String result = "";
+        
+        //Process the next token in file and check strings match
         instance.nextToken();
-        String expResult = "program";
-        
-        String result = instance.getLexeme();
-        System.out.println(expResult);
-        System.out.println(result);
+        expResult = "program";        
+        result = instance.getLexeme();
         assertEquals(expResult, result);
+        System.out.println(expResult + " = " + result);
         
-    }
+        //Call nextToken() then check if matches if from file
+        instance.nextToken();
+        expResult = "if";
+        result = instance.getLexeme();
+        assertEquals(expResult, result);
+        System.out.println(expResult + " = " + result);
+        
+        //Call nextToken(), check 'while' doens't match 'else'
+        instance.nextToken();
+        expResult = "while";
+        result = instance.getLexeme();
+        assertEquals(expResult, result);
+        System.out.println(expResult + " = " + result);
+        
+    } // end testGetLexeme
    
-}
+} //end ScannerTest
