@@ -115,29 +115,30 @@ public class ScannerTest {
         result = numTest.nextToken();
         assertEquals(expResult, result); 
         System.out.println(numTest.getLexeme());
-        
-        // Test that 10.123.456 is not valid
-        expResult = true;
-        result = numTest.nextToken();
-        assertEquals(expResult, result); 
-        System.out.println(numTest.getLexeme());
-        
+                     
         // Test that 10e++5 is not valid
         // Need to change code in nextToken because it's currently valid
-        expResult = true;
+        expResult = false;
         result = numTest.nextToken();
         assertEquals(expResult, result); 
         System.out.println(numTest.getLexeme());
         
         // Test that 10e--5 is not valid
-        // Need to change code. Currently works
-        expResult = true;
+        //TODO NOT SURE WHY THIS RETURNS TRUE BUT SCANNER RUNS PROPERLY?
+        expResult = false;
         result = numTest.nextToken();
         assertEquals(expResult, result); 
         System.out.println(numTest.getLexeme());
         
         // Test .5 is not a valid real number
-        expResult = true;
+        expResult = false;
+        result = numTest.nextToken();
+        assertEquals(expResult, result); 
+        System.out.println(numTest.getLexeme());
+        
+        // Test that 10.123.456 is not valid
+        //TODO NOT SURE WHY THIS RETURNS TRUE BUT SCANNER RUNS PROPERLY?
+        expResult = false;
         result = numTest.nextToken();
         assertEquals(expResult, result); 
         System.out.println(numTest.getLexeme());

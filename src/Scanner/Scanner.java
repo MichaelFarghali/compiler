@@ -6,13 +6,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PushbackReader;
 
+
 /**
- *
+ * The Scanner class reads through an input file and attempts to match every 
+ * string of symbols, letters, and digits to a specific token type from 
+ * TokenType class using the LookUpTable class
  * @author Michael Farghali
  */
 public class Scanner {
 
-    //// Class constants
+     //// Class constants
     private final int START = 0;
     private final int IN_ID_OR_KEYWORD = 1;
     private final int ERROR = 100;
@@ -57,7 +60,7 @@ public class Scanner {
      *
      * @return int The next character in input stream.
      */
-    public int getNextChar() {
+    private int getNextChar() {
         int currentChar = 0;
         // Check for IOException
         try {
@@ -74,7 +77,7 @@ public class Scanner {
      * in a try/catch block
      * @param aChar A single character to be pushed back into the file stream
      */
-    public void pushBackChar(int aChar) {
+    private void pushBackChar(int aChar) {
         // Check for IOException
         try {
             input.unread(aChar);
@@ -86,8 +89,9 @@ public class Scanner {
     }
 
     /**
-     * The nextToken() method reads in a string from a file one character at a
-     * time.
+     * Reads in a string from a file one character at a
+     * time. It then creates strings of words, numbers, or symbols and attempts 
+     * to match the string to a token type using the LookUpTable class.
      *
      * @return True if string is a valid token in LookUpTable. False otherwise
      */
@@ -108,7 +112,8 @@ public class Scanner {
                     if (currentCharacter == -1) {
                         this.lexeme = "";
                         this.type = null;
-                        return (false);
+                        System.out.println("End of file reached.");
+                        System.exit(0);                        
                     } 
                     // If reads in digit go to IN_DIGIT state
                     else if (Character.isDigit(currentCharacter)) {
@@ -182,7 +187,9 @@ public class Scanner {
                 case IN_ID_OR_KEYWORD:
                     // If EOF is reached the ID is complete
                     if (currentCharacter == -1) {
+                        pushBackChar(currentCharacter);
                         stateNumber = ID_COMPLETE;
+                        System.out.println("Successfully processed file.");
                     } 
                     // Read in more letters or digits
                     else if (Character.isLetterOrDigit(currentCharacter)) {
@@ -270,7 +277,7 @@ public class Scanner {
                         //Update trackers of occurance of '.'
                         realNumFound = true; 
                         symbolAlreadyFound = true;
-                        //Get next character if is is anything other than a 
+                        //Get next character if is anything other than a 
                         //digit after '.' go to ERROR state and break 
                         //from switch statement
                         currentCharacter = getNextChar();
@@ -295,11 +302,14 @@ public class Scanner {
                             currentLexeme += (char) currentCharacter;
                             currentCharacter = getNextChar();
                             // Check that next character is a digit or ERROR
-                            if (!Character.isDigit(currentCharacter)){
-                                stateNumber = ERROR;
-                            } // Or read in digit
+                            if (Character.isDigit(currentCharacter)){
+                                currentLexeme += (char)currentCharacter;
+                            } 
                             else {
-                                currentLexeme += (char) currentCharacter;
+                                currentLexeme += (char)currentCharacter;
+                                stateNumber = ERROR;
+                                break;
+                                //currentLexeme += (char) currentCharacter;
                             }
                         }  
                         // Keep reading in digits until token complete or ERROR
@@ -362,10 +372,18 @@ public class Scanner {
         return (false);
     } //end nextToken
 
+    /**
+     * Gets the token type.
+     * @return an object of type TokenType
+     */
     public TokenType getToken() {
         return this.type;
     }
 
+    /**
+     * Returns the current string. 
+     * @return the current string formed by one or more lexemes
+     */
     public String getLexeme() {
         return this.lexeme;
     }

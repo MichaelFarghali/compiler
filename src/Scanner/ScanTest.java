@@ -3,6 +3,7 @@ package Scanner;
 
 import java.io.File;
 
+
 /**
  * The ScanTest class reads in a file with my Scanner class and prints to the 
  * screen the tokens found and what token type they match to in the LookUpTable
@@ -19,9 +20,9 @@ public class ScanTest {
         // Create a Scanner and point it at a file
         Scanner s = new Scanner(new File("input.txt"));
 
-        // Call nextToken() once to establish if there are any tokens
-        boolean thereIsAToken = s.nextToken();
-
+        // Set to true to start the while loop
+        boolean thereIsAToken = true;
+        
         // While nextToken is true, print the tokens
         while (thereIsAToken) {
             thereIsAToken = s.nextToken();
