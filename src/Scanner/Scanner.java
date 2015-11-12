@@ -40,7 +40,7 @@ public class Scanner {
      * The Scanner constructor opens up the specified file. If input file not
      * found it exits with an error message. An instance of Java's built-in 
      * PushBackReader is initialized with the FileReader
-     * @param inputFile The program file to be scanned.
+     * @param inputFile The program file to be scanned of type File.
      */
     public Scanner(File inputFile) {
 
