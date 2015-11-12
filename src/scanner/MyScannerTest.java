@@ -1,28 +1,26 @@
-package Scanner;
+package scanner;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 
 import java.io.File;
 
+
 public class MyScannerTest {
     
     public static void main(String[] args){
-        
-        Scanner s = new Scanner( new File( "TestScannerTest.txt"));
+        //Create instance of Scanner
+        Scanner s = new Scanner( new File( "LexemeTest.txt"));
         
         boolean hasToken = s.nextToken();
         TokenType token = s.getToken();
         String lexeme = s.getLexeme();
         
         //Test to make sure these values are correct
-        assert hasToken : "No token for >";
-        assert token == TokenType.GREATER_THAN: "No token type for >";
-        assert lexeme.equals(">");
+        assert hasToken : "No token for #";
+        assert token == TokenType.GREATER_THAN: "No token type for #";
+        assert lexeme.equals("Symbols");
+        System.out.println(lexeme);
+        System.out.println(token);
         
         hasToken = s.nextToken();
         token = s.getToken();

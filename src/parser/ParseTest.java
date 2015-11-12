@@ -1,5 +1,5 @@
 
-package Parser;
+package parser;
 
 /**
  * The ParseTest class checks that Parse class is working as expected
@@ -14,7 +14,7 @@ public class ParseTest {
         
         //TODO Check for remaining tokens here
         
-        System.
+        
     }
     
     

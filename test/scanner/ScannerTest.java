@@ -1,6 +1,8 @@
 
-package Scanner;
+package scanner;
 
+import scanner.TokenType;
+import scanner.Scanner;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

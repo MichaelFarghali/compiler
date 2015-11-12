@@ -1,7 +1,7 @@
 
-package Parser;
-import Scanner.Scanner;
-import Scanner.TokenType;
+package parser;
+import scanner.Scanner;
+import scanner.TokenType;
 import java.io.File;
 
 /**
