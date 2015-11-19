@@ -29,6 +29,8 @@ public class Scanner {
     private final int IN_CURLY_BRACKETS = 4;
     private final int IN_ASSIGN_OP = 5;
     private final int IN_DIGIT = 6;
+    private final int IN_DECIMAL = 7;
+    private final int IN_SCI_NOTATION = 8;
 
     //// Instance Variables
     private TokenType type;
@@ -99,7 +101,7 @@ public class Scanner {
         int stateNumber = 0;
         String currentLexeme = "";
         int currentCharacter = 0;
-        boolean realNumFound = false;
+        boolean digitRead = false;
         boolean symbolAlreadyFound = false;
 
         while (stateNumber < ERROR) {
@@ -164,8 +166,7 @@ public class Scanner {
                     // If lexeme is '{' set state to 3 to check  for '}'
                     else if (currentCharacter == '{') {
                         stateNumber = IN_CURLY_BRACKETS;
-                    }
-                    
+                    }                    
                     // For anything else go to ERROR state
                     else {
                         currentLexeme += (char) currentCharacter;
@@ -246,67 +247,22 @@ public class Scanner {
                         // Stay in the comment state 3
                     }
                     break;
-                // Read in digits until ID is complete or an invalid number is 
-                // found such as "1." "10E", "10E+", "123VariableName"
+                // Read in digits until ID is complete or process 
                 case IN_DIGIT:
                     // If EOF is reached the number  is complete                    
                     if (currentCharacter == -1) {
                         stateNumber = INTEGER_COMPLETE;
                     }
-                    //Check that '.' hasn't already been read for current number
-                    if (currentCharacter == '.' && symbolAlreadyFound){
-                        stateNumber = ERROR;
-                    }
-                    //Check 'e' hasn't already been read for current number
-                    if (currentCharacter == 'e' && symbolAlreadyFound){
-                        stateNumber = ERROR;
-                    }
-                    // Handle decimal numbers   
+                    // If '.' append and go to IN_DECIMAL state 
                     if (currentCharacter == '.'){
                         currentLexeme += (char) currentCharacter;
-                        //Update trackers of occurance of '.'
-                        realNumFound = true; 
-                        symbolAlreadyFound = true;
-                        //Get next character if is anything other than a 
-                        //digit after '.' go to ERROR state and break 
-                        //from switch statement
-                        currentCharacter = getNextChar();
-                        if (!Character.isDigit(currentCharacter)){
-                            currentLexeme += (char) currentCharacter;
-                            stateNumber = ERROR;
-                            break;
-                        }              
-                        
+                        stateNumber = IN_DECIMAL;
+                        break;
                     }
-                    // Handle scientific notation numbers
+                    // Append 'e' and go to IN_SCI_NOTATION state
                     if (currentCharacter == 'e'){
                         currentLexeme += (char) currentCharacter;
-                        //Update trackers of 'e' as being read in
-                        realNumFound = true;
-                        symbolAlreadyFound = true;
-                        //Get next character after 'e'
-                        currentCharacter = getNextChar();
-                        // Check if '+' or '-'
-                        if (currentCharacter == '+' ||
-                            currentCharacter == '-'){
-                            currentLexeme += (char) currentCharacter;
-                            currentCharacter = getNextChar();
-                            // Check that next character is a digit or ERROR
-                            if (Character.isDigit(currentCharacter)){
-                                currentLexeme += (char)currentCharacter;
-                            } 
-                            else {
-                                currentLexeme += (char)currentCharacter;
-                                stateNumber = ERROR;
-                                break;
-                                //currentLexeme += (char) currentCharacter;
-                            }
-                        }  
-                        // Keep reading in digits until token complete or ERROR
-                        else if(Character.isDigit(currentCharacter))
-                            currentLexeme += (char) currentCharacter;
-                        else
-                            stateNumber = ERROR;
+                        stateNumber = IN_SCI_NOTATION;
                     }
                     // Check for ID names that illegaly start with number
                     else if (Character.isLetter(currentCharacter)){
@@ -320,12 +276,62 @@ public class Scanner {
                     // go to real or integer complete state
                     else {
                         pushBackChar(currentCharacter);
-                        if (realNumFound){
-                            stateNumber = REAL_COMPLETE;
-                            realNumFound = false; }
-                        else{
-                            stateNumber = INTEGER_COMPLETE;}
+                        stateNumber = INTEGER_COMPLETE;
                         
+                    }
+                    break;
+                case IN_DECIMAL:
+                    // If EOF is reached the number  is complete     
+                    if (currentCharacter == -1) {
+                        stateNumber = REAL_COMPLETE;
+                    }
+                    // Check that there is at least one digit following the '.'
+                    // using the digitRead flag
+                    if (!Character.isDigit((char)currentCharacter) && 
+                            !digitRead){
+                        currentLexeme += (char) currentCharacter;
+                        stateNumber = ERROR;            
+                    }
+                    // Keep reading in digits and set digitRead to true
+                    else if (Character.isDigit((char)currentCharacter)){
+                        currentLexeme += (char) currentCharacter;
+                        digitRead = true;
+                    } // Check that there are no letters in number   
+                    else if (Character.isLetter(currentCharacter)){
+                        currentLexeme += (char) currentCharacter;
+                        stateNumber = ERROR;
+                    }// Push back last character and return digitRead to false
+                    else {
+                        pushBackChar(currentCharacter);
+                        stateNumber = REAL_COMPLETE;
+                        digitRead = false;                                           
+                    }
+                break;
+                case IN_SCI_NOTATION:
+                    System.out.println("Welcome to sci land.");
+                    // If EOF is reached the number  is complete     
+                    if (currentCharacter == -1) {
+                        stateNumber = REAL_COMPLETE;
+                    }
+                    // Check for '+' or '-'
+                    if (currentCharacter == '+' ||
+                        currentCharacter == '-' && !symbolAlreadyFound){
+                        currentLexeme += (char) currentCharacter;
+                        stateNumber = ERROR;            
+                    }
+                    // Keep reading in digits and set digitRead to true
+                    else if (Character.isDigit((char)currentCharacter)){
+                        currentLexeme += (char) currentCharacter;
+                        digitRead = true;
+                    } // Check that there are no letters in number   
+                    else if (Character.isLetter(currentCharacter)){
+                        currentLexeme += (char) currentCharacter;
+                        stateNumber = ERROR;
+                    }// Push back last character and return digitRead to false
+                    else {
+                        pushBackChar(currentCharacter);
+                        stateNumber = REAL_COMPLETE;
+                        digitRead = false;                                           
                     }
                     break;
 
