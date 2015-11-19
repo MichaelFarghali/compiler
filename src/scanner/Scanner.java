@@ -129,34 +129,23 @@ public class Scanner {
                     else if (Character.isWhitespace(currentCharacter)) {
 
                     } 
-                    // If lexeme is '+' or '-' set state to SYMBOL_COMPLETE
+                    // If lexeme is any of the shott symbols
+                    // set state to SYMBOL_COMPLETE
                     else if (currentCharacter == '+'
-                            || currentCharacter == '-') {
-                        stateNumber = SYMBOL_COMPLETE;
-                        currentLexeme += (char) currentCharacter;
-                    } 
-                    // Check for =, *, or / SYMBOL_COMPLETE
-                    else if (currentCharacter == '='
+                            || currentCharacter == '-'
                             || currentCharacter == '*'
-                            || currentCharacter == '/') {
-                        stateNumber = SYMBOL_COMPLETE;
-                        currentLexeme += (char) currentCharacter;
-                    } 
-                    // Check for '.' ',' ';'
-                    else if (currentCharacter == '.'
+                            || currentCharacter == '/'
+                            || currentCharacter == '.'                            
                             || currentCharacter == ','
-                            || currentCharacter == ';') {
-                        stateNumber = SYMBOL_COMPLETE;
-                        currentLexeme += (char) currentCharacter;
-                    } 
-                    // Check for parentheses and brackets
-                    else if (currentCharacter == '('
-                            || currentCharacter == ')'
+                            || currentCharacter == ';'
                             || currentCharacter == '['
-                            || currentCharacter == ']') {
+                            || currentCharacter == ']'
+                            || currentCharacter == '('
+                            || currentCharacter == ')') {
                         stateNumber = SYMBOL_COMPLETE;
                         currentLexeme += (char) currentCharacter;
                     } 
+                 
                     // If lexeme '>' set state to IN_GREATER_THAN_EQUALS state
                     else if (currentCharacter == '>') {
                         stateNumber = IN_GREATER_THAN_EQUALS;
@@ -176,6 +165,7 @@ public class Scanner {
                     else if (currentCharacter == '{') {
                         stateNumber = IN_CURLY_BRACKETS;
                     }
+                    
                     // For anything else go to ERROR state
                     else {
                         currentLexeme += (char) currentCharacter;
