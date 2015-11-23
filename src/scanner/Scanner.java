@@ -163,7 +163,7 @@ public class Scanner {
                         stateNumber = IN_ASSIGN_OP;
                         currentLexeme += (char) currentCharacter;
                     } 
-                    // If lexeme is '{' set state to 3 to check  for '}'
+                    // If lexeme'{' set state IN_CURLY_BRACKETS check  for '}'
                     else if (currentCharacter == '{') {
                         stateNumber = IN_CURLY_BRACKETS;
                     }                    
@@ -247,7 +247,8 @@ public class Scanner {
                         // Stay in the comment state 3
                     }
                     break;
-                // Read in digits until ID is complete or process 
+                // Read in digits until int is complete or go to state for
+                // float or scientific notation numbers
                 case IN_DIGIT:
                     // If EOF is reached the number  is complete                    
                     if (currentCharacter == -1) {
@@ -259,10 +260,11 @@ public class Scanner {
                         stateNumber = IN_DECIMAL;
                         break;
                     }
-                    // Append 'e' and go to IN_SCI_NOTATION state
+                    // Append 'e' append and go to IN_SCI_NOTATION state
                     if (currentCharacter == 'e'){
                         currentLexeme += (char) currentCharacter;
                         stateNumber = IN_SCI_NOTATION;
+                        break;
                     }
                     // Check for ID names that illegaly start with number
                     else if (Character.isLetter(currentCharacter)){
@@ -308,14 +310,21 @@ public class Scanner {
                     }
                 break;
                 case IN_SCI_NOTATION:
-                    System.out.println("Welcome to sci land.");
                     // If EOF is reached the number  is complete     
                     if (currentCharacter == -1) {
                         stateNumber = REAL_COMPLETE;
                     }
-                    // Check for '+' or '-'
-                    if (currentCharacter == '+' ||
-                        currentCharacter == '-' && !symbolAlreadyFound){
+                    // Check for '+' or '-' and that they haven't been found 
+                    // already with symbolAlreadyFound flag
+                    if ((currentCharacter == '+' ||
+                        currentCharacter == '-') && !symbolAlreadyFound){
+                        currentLexeme += (char) currentCharacter;
+                        symbolAlreadyFound = true;   
+                    }
+                    // Check that there is at least one digit following the 'e'
+                    // using the digitRead flag
+                    else if (!Character.isDigit((char)currentCharacter) && 
+                            !digitRead){
                         currentLexeme += (char) currentCharacter;
                         stateNumber = ERROR;            
                     }
