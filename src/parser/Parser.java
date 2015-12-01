@@ -57,13 +57,18 @@ public class Parser {
      */
     public void program() {
         System.out.println("program");
-        match( currentToken.PROGRAM);
-        match( currentToken.ID);
-        match( currentToken.SEMICOLON);
+        match( TokenType.PROGRAM);
+        match( TokenType.ID);
+        match( TokenType.SEMICOLON);
         declarations();
         subprogram_declarations();
         compound_statement();
-        match( currentToken.PERIOD);
+        match( TokenType.PERIOD);
+    }
+    
+    public void identifier_list()
+    {
+        
     }
     
     /**
@@ -71,7 +76,29 @@ public class Parser {
      */
     public void declarations() {
         System.out.println("declarations");
+        if( currentToken == TokenType.VAR){
+            identifier_list();
+            type();
+            declarations();
+        }
         
+        
+    }
+    
+    /**
+     * Implements type -> standard_type
+     */
+    public void type()
+    {
+        standard_type();
+    }
+    
+    public void standard_type()
+    {
+        if( currentToken == TokenType.INTEGER)
+            match( TokenType.INTEGER);
+        else
+            match( TokenType.REAL);
     }
     
     /**
@@ -89,9 +116,9 @@ public class Parser {
      */
     public void compound_statement() {
         System.out.println("compound_statement");
-        match( currentToken.BEGIN);
+        match( TokenType.BEGIN);
         optional_statements();
-        match( currentToken.END);
+        match( TokenType.END);
     }
     
     /**
