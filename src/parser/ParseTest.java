@@ -9,8 +9,10 @@ public class ParseTest {
     
     public static void main(String args[])
     {
-        String fileName = "parseTest.txt";
-        Parser parse = new Parser(fileName);
+        
+        Parser parse = new Parser("parseTest.txt");
+        
+        parse.program();
         
         //TODO Check for remaining tokens here
         

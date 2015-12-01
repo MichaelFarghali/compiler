@@ -23,5 +23,93 @@ public class Parser {
         currentToken = scanner.getToken();        
     }
     
+    public void match( TokenType expectedToken) {
+        System.out.println("match " + expectedToken + " with current " + currentToken + ":" + scanner.getLexeme());
+        if( currentToken == expectedToken) {
+            boolean scanResult = scanner.nextToken();
+            if( scanResult) {
+                currentToken = scanner.getToken();
+            }
+            else {
+                System.out.println("No Token Available");
+                String lexeme = scanner.getLexeme();
+                if( lexeme == null) {
+                    System.out.println("End of file");
+                }
+                else {
+                    System.out.println("Scanner barfed on " + lexeme);
+                }
+            }
+            //System.out.println("   next token is now " + currentToken);
+            //System.out.println("   next attri is now " + scanner.getAttribute());
+        }
+        else {
+            error();  // We don't match!
+        }
+    }
     
+    /**
+     * Implements program -> program id ;
+     *                       declarations
+     *                       subprogram_declarations
+     *                       compound_statement
+     *                       .
+     */
+    public void program() {
+        System.out.println("program");
+        match( currentToken.PROGRAM);
+        match( currentToken.ID);
+        match( currentToken.SEMICOLON);
+        declarations();
+        subprogram_declarations();
+        compound_statement();
+        match( currentToken.PERIOD);
+    }
+    
+    /**
+     * Implements  part of declarations that is declarations -> lambda.
+     */
+    public void declarations() {
+        System.out.println("declarations");
+        
+    }
+    
+    /**
+     * Implements the part of subprogram_declarations that is 
+     * subprogram_declarations -> lambda.
+     */
+   public void subprogram_declarations() {
+        System.out.println("subprogram_declarations");
 }
+
+
+ /**
+     * Implements
+     *   compound_statement -> begin optional_statements end
+     */
+    public void compound_statement() {
+        System.out.println("compound_statement");
+        match( currentToken.BEGIN);
+        optional_statements();
+        match( currentToken.END);
+    }
+    
+    /**
+     * Implements the part of optional_statements that is 
+     * optional_statements -> lambda.
+     */
+    public void optional_statements() {
+        System.out.println("optional_statements");
+        
+    }
+    
+    /**
+     * Handles an error.
+     * Prints out the existence of an error and then exits.
+     */
+    public void error() {
+        System.out.println("Error");
+        System.exit( 1);
+    }
+
+}//end parser
