@@ -37,6 +37,7 @@ public class Scanner {
     private String lexeme;
     private PushbackReader input;
     private LookupTable lookup = new LookupTable();
+    private int countLine;  // Used to count the number of lines
 
     /**
      * The Scanner constructor opens up the specified file. If input file not
@@ -54,7 +55,16 @@ public class Scanner {
             System.exit(1);
         }
         this.input = new PushbackReader(fr);
+        countLine = 1; // initialize the line count to 1
     }//end constructor    
+    /**
+     * Gets the the current value of countLine
+     * @return int The number of lines the source file
+     */
+    public int getCount()
+    {
+        return countLine;
+    }
 
     /**
      * Reads a single character using PushBackReader from input file and returns
@@ -117,6 +127,10 @@ public class Scanner {
                         System.out.println("End of file reached.");
                         System.exit(0);                        
                     } 
+                    // If a new line increment the line counter
+                    if (currentCharacter == '\n'){
+                        countLine++;                        
+                    }
                     // If reads in digit go to IN_DIGIT state
                     else if (Character.isDigit(currentCharacter)) {
                         stateNumber = IN_DIGIT;

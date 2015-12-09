@@ -6,7 +6,7 @@ import java.io.File;
 
 /**
  * The Parser class will eventually process a source file and create a parse tree
- * or reject the source as invalid using recursive descent parsing.  
+ * or reject the source as invalid using top down recursive descent parsing.  
  * @Michael Farghali
  */
 public class Parser {
@@ -64,6 +64,8 @@ public class Parser {
         subprogram_declarations();
         compound_statement();
         match( TokenType.PERIOD);
+        //TODO
+        //Check if the filestream is empty
     }
     
     public void identifier_list()
@@ -78,10 +80,11 @@ public class Parser {
         System.out.println("declarations");
         if( currentToken == TokenType.VAR){
             identifier_list();
+            match(TokenType.COLON);
             type();
+            match( TokenType.SEMICOLON);
             declarations();
-        }
-        
+        } 
         
     }
     
@@ -135,7 +138,8 @@ public class Parser {
      * Prints out the existence of an error and then exits.
      */
     public void error() {
-        System.out.println("Error");
+        System.out.println("error: Line " + scanner.getCount()+ " No match found "
+                + "for: " + scanner.getLexeme());
         System.exit( 1);
     }
 
