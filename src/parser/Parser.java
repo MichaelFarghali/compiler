@@ -138,9 +138,27 @@ public class Parser {
         standard_type();
         match(TokenType.SEMICOLON);
     }
-
+    
     public void arguments() {
         System.out.println("arguements");
+        if ( currentToken == TokenType.L_PARENTHESES){
+            match(TokenType.L_PARENTHESES);
+            parameter_list();
+            match(TokenType.R_PARENTHESES);
+        }
+    }
+    /**
+     * Implements EBNF production rule 
+     * parameter_list -> identifier_list : type { ; identifier_list : type}
+     */
+    public void parameter_list(){
+        identifier_list();
+        match(TokenType.COLON);
+        type();
+        while (currentToken == TokenType.SEMICOLON){
+            match(TokenType.SEMICOLON);
+            parameter_list();
+        }
     }
 
     /**
@@ -159,7 +177,14 @@ public class Parser {
      */
     public void optional_statements() {
         System.out.println("optional_statements");
-
+        if (currentToken == TokenType.ID){
+            statement_list();
+        }
+    }
+    
+    public void statement_list(){
+        System.out.println("optional_statements");
+        
     }
 
     /**
