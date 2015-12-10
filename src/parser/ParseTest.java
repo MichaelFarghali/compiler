@@ -10,7 +10,7 @@ public class ParseTest {
     public static void main(String args[])
     {
         
-        Parser parse = new Parser("parseTest.txt");
+        Parser parse = new Parser("functionTest.txt");
         
         parse.program();
         
