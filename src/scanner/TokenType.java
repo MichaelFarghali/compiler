@@ -25,6 +25,8 @@ public enum TokenType {
     ELSE,
     DO,
     WHILE,
+    READ,
+    WRITE,
     
     
     PLUS,

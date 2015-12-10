@@ -1,6 +1,6 @@
 program Hello;
 
-function f : integer;
+function f (args: integer) : integer;
     begin
     end;
 begin

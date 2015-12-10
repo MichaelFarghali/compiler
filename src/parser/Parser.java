@@ -184,7 +184,56 @@ public class Parser {
     
     public void statement_list(){
         System.out.println("optional_statements");
-        
+        statement();
+        while (currentToken == TokenType.SEMICOLON){
+            match(TokenType.SEMICOLON);
+            statement_list();
+        }
+    }
+    
+    public void statement(){
+        if(currentToken == TokenType.ID) {
+            variable();
+            match(TokenType.ASSIGN);
+            expression();
+        }
+        else if (currentToken == TokenType.BEGIN){
+            compound_statement();
+        }
+        else if (currentToken == TokenType.IF){
+            match(TokenType.IF);
+            expression();
+            match(TokenType.THEN);
+            statement();
+            match(TokenType.ELSE);
+            statement();
+        }
+        else if (currentToken == TokenType.WHILE){
+            match(TokenType.WHILE);
+            expression();
+            match(TokenType.DO);
+            statement();
+        }
+        else if (currentToken == TokenType.READ){
+            match(TokenType.READ); // Treating as keyword for now
+        }
+        else if (currentToken == TokenType.WRITE){
+            match(TokenType.WRITE); // Treating as keyword for now
+        }
+        else
+            error();
+    }
+    
+    public void variable(){
+        match(TokenType.ID);
+        if (currentToken == TokenType.L_BRACKET){
+            expression();
+            match(TokenType.R_BRACKET);
+        }
+    }
+    
+    public void expression(){
+        //STUB
     }
 
     /**

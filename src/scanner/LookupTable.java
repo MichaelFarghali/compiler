@@ -33,7 +33,8 @@ public class LookupTable extends Hashtable<String,TokenType> {
         this.put("else", TokenType.ELSE);
         this.put("do", TokenType.DO);
         this.put("while", TokenType.WHILE);
-        
+        this.put("read", TokenType.READ);
+        this.put("write", TokenType.WRITE);
         // Symbols
         this.put( "+", TokenType.PLUS);
         this.put( "-", TokenType.MINUS);        
