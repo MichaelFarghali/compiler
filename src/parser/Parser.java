@@ -70,7 +70,11 @@ public class Parser {
     
     public void identifier_list()
     {
-        
+        match(TokenType.ID);
+        while (currentToken == TokenType.COMMA){
+            match(TokenType.COMMA);
+            match(TokenType.ID);
+        }     
     }
     
     /**
@@ -79,6 +83,7 @@ public class Parser {
     public void declarations() {
         System.out.println("declarations");
         if( currentToken == TokenType.VAR){
+            match(TokenType.VAR);
             identifier_list();
             match(TokenType.COLON);
             type();
