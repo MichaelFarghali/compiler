@@ -1,0 +1,9 @@
+program Hello;
+
+function f (args: integer) : integer;
+    begin
+    end;
+begin
+var1 :=
+end
+.

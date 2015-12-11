@@ -198,6 +198,7 @@ public class Parser {
             expression();
         }
         else if (currentToken == TokenType.BEGIN){
+            System.out.println("in statement() Token:" );
             compound_statement();
         }
         else if (currentToken == TokenType.IF){
