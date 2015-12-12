@@ -234,7 +234,140 @@ public class Parser {
     }
     
     public void expression(){
-        //STUB
+        simple_expression();
+        if ( currentToken == TokenType.EQUALS){
+            match(TokenType.EQUALS);
+            simple_expression();
+        }
+        else if ( currentToken == TokenType.NOT_EQUAL){
+            match(TokenType.NOT_EQUAL);
+            simple_expression();
+        }
+        else if ( currentToken == TokenType.LESS_THAN){
+            match(TokenType.LESS_THAN);
+            simple_expression();
+        }
+        else if ( currentToken == TokenType.LESS_THAN_EQUALS){
+            match(TokenType.LESS_THAN_EQUALS);
+            simple_expression();
+        }
+        else if ( currentToken == TokenType.GREATER_THAN_EQUALS){
+            match(TokenType.GREATER_THAN_EQUALS);
+            simple_expression();
+        }
+        else if ( currentToken == TokenType.GREATER_THAN){
+            match(TokenType.GREATER_THAN);
+            simple_expression();
+        }           
+        
+    }
+    
+    public void simple_expression(){
+        if( currentToken == TokenType.PLUS ||
+            currentToken == TokenType.MINUS){
+            
+            sign();
+            term();
+            simple_part();
+        }
+        else {
+            term();
+            simple_part();
+        }        
+    }
+    
+    public void simple_part(){
+        if (currentToken == TokenType.PLUS) {
+            match(TokenType.PLUS);
+            term();
+            simple_part();
+        }
+        else if (currentToken == TokenType.MINUS) {
+            match(TokenType.MINUS);
+            term();
+            simple_part();
+        }
+        else if (currentToken == TokenType.OR) {
+            match(TokenType.OR);
+            term();
+            simple_part();
+        }
+    }
+    
+    public void term(){
+        factor();
+        term_part();
+    }
+    
+    public void term_part(){
+        while( currentToken == TokenType.MULTIPLY ||
+               currentToken == TokenType.DIVIDE ||
+               currentToken == TokenType.DIV ||
+               currentToken == TokenType.MOD ||
+               currentToken == TokenType.AND ) {
+            
+            mulop();
+            factor();
+            term_part();
+        }          
+    }
+    
+    public void factor(){
+        if( currentToken == TokenType.ID){
+            match(TokenType.ID);
+            if( currentToken == TokenType.L_BRACKET){
+                match(TokenType.L_BRACKET);
+                expression();
+                match(TokenType.R_BRACKET);
+            }
+            else if ( currentToken == TokenType.L_PARENTHESES){
+                match(TokenType.L_PARENTHESES);
+                expression_list();
+                match(TokenType.R_PARENTHESES);
+            }
+        }
+        //TODO implement num
+        else if( currentToken == TokenType.L_PARENTHESES){
+            match(TokenType.L_PARENTHESES);
+            expression();
+            match(TokenType.R_PARENTHESES);
+        }
+        //TODO Implement not factor
+        else
+            error();
+    }
+    
+    public void expression_list(){
+        expression();
+        if (currentToken == TokenType.COMMA){
+            match(TokenType.COMMA);
+            expression_list();
+        }
+    }
+    
+    public void sign(){
+        if ( currentToken == TokenType.PLUS)
+            match(TokenType.PLUS);
+        else
+            match(TokenType.MINUS);
+    }    
+    
+    public void mulop(){
+        if ( currentToken == TokenType.MULTIPLY) {
+            match(TokenType.MULTIPLY);
+        }
+        else if (currentToken == TokenType.DIVIDE) {
+            match(TokenType.DIVIDE);
+        }
+        else if (currentToken == TokenType.MOD) {
+            match(TokenType.MOD);
+        }
+        else if (currentToken == TokenType.DIV) {
+            match(TokenType.DIV);
+        }
+        else if (currentToken == TokenType.AND) {
+            match(TokenType.AND);
+        }
     }
 
     /**
