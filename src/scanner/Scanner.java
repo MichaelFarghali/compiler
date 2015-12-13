@@ -23,7 +23,6 @@ public class Scanner {
     private final int SYMBOL_COMPLETE = 102;
     private final int SHORT_SYMBOL_COMPLETE = 103;
     private final int INTEGER_COMPLETE = 104;
-    private final int REAL_COMPLETE = 105;
     private final int IN_GREATER_THAN_EQUALS = 2;
     private final int IN_LESS_THAN_EQUALS = 3; // Also handles the <> operator
     private final int IN_CURLY_BRACKETS = 4;
@@ -145,7 +144,7 @@ public class Scanner {
                     else if (Character.isWhitespace(currentCharacter)) {
 
                     } 
-                    // If lexeme is any of the shott symbols
+                    // If lexeme is any of the short symbols
                     // set state to SYMBOL_COMPLETE
                     else if (currentCharacter == '+'
                             || currentCharacter == '-'
@@ -299,7 +298,7 @@ public class Scanner {
                 case IN_DECIMAL:
                     // If EOF is reached the number  is complete     
                     if (currentCharacter == -1) {
-                        stateNumber = REAL_COMPLETE;
+                        stateNumber = INTEGER_COMPLETE;
                     }
                     // Check that there is at least one digit following the '.'
                     // using the digitRead flag
@@ -319,14 +318,14 @@ public class Scanner {
                     }// Push back last character and return digitRead to false
                     else {
                         pushBackChar(currentCharacter);
-                        stateNumber = REAL_COMPLETE;
+                        stateNumber = INTEGER_COMPLETE;
                         digitRead = false;                                           
                     }
                 break;
                 case IN_SCI_NOTATION:
                     // If EOF is reached the number  is complete     
                     if (currentCharacter == -1) {
-                        stateNumber = REAL_COMPLETE;
+                        stateNumber = INTEGER_COMPLETE;
                     }
                     // Check for '+' or '-' and that they haven't been found 
                     // already with symbolAlreadyFound flag
@@ -353,7 +352,7 @@ public class Scanner {
                     }// Push back last character and return digitRead to false
                     else {
                         pushBackChar(currentCharacter);
-                        stateNumber = REAL_COMPLETE;
+                        stateNumber = INTEGER_COMPLETE;
                         digitRead = false;                                           
                     }
                     break;
@@ -380,11 +379,7 @@ public class Scanner {
             return (true);
         }
         else if(stateNumber == INTEGER_COMPLETE){
-            this.type = lookup.get("integer");
-            return (true);
-        }
-        else if(stateNumber == REAL_COMPLETE){
-            this.type = lookup.get("real");
+            this.type = TokenType.NUM;
             return (true);
         }
 

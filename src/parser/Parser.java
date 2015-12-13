@@ -95,6 +95,7 @@ public class Parser {
      */
     public void type() {
         standard_type();
+        //TODO ADD ARRAY OPTION
     }
 
     public void standard_type() {
@@ -326,7 +327,9 @@ public class Parser {
                 match(TokenType.R_PARENTHESES);
             }
         }
-        //TODO implement num
+        else if( currentToken == TokenType.NUM){
+            match(TokenType.NUM);
+        }
         else if( currentToken == TokenType.L_PARENTHESES){
             match(TokenType.L_PARENTHESES);
             expression();
