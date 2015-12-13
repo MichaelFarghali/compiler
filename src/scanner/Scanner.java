@@ -364,6 +364,11 @@ public class Scanner {
         this.lexeme = currentLexeme;
         if (stateNumber == ERROR) {
             this.type = null;
+            while( Character.isDigit((char)currentCharacter) ||
+                   Character.isLetter((char)currentCharacter)){
+                this.lexeme += (char)currentCharacter;
+                currentCharacter = getNextChar();
+            }
             return (false);
         } else if (stateNumber == ID_COMPLETE) {
             this.type = lookup.get(this.lexeme);

@@ -4,8 +4,7 @@ function f (args: integer) : integer;
     begin
     end;
 begin
-var1 := (10e++5 mod 5)
-
+var1 := 5
 end
 .
-agf
+this

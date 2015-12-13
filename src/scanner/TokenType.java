@@ -29,6 +29,7 @@ public enum TokenType {
     WRITE,
     OR,
     NUM,
+    NOT,
     
     
     PLUS,

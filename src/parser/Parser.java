@@ -61,6 +61,10 @@ public class Parser {
         compound_statement();
         System.out.println("Current Token is " +currentToken);
         match(TokenType.PERIOD);
+        if( currentToken != null){
+            System.out.println("File not empty");
+            error();
+        }
         //TODO
         //Check if the filestream is empty
     }
@@ -335,7 +339,10 @@ public class Parser {
             expression();
             match(TokenType.R_PARENTHESES);
         }
-        //TODO Implement not factor
+        else if( currentToken == TokenType.NOT){
+            match(TokenType.NOT);
+            factor();
+        }
         else
             error();
     }
