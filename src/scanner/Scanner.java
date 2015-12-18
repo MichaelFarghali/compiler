@@ -364,6 +364,8 @@ public class Scanner {
         this.lexeme = currentLexeme;
         if (stateNumber == ERROR) {
             this.type = null;
+            System.out.println("In error state");
+            currentCharacter = getNextChar();
             while( Character.isDigit((char)currentCharacter) ||
                    Character.isLetter((char)currentCharacter)){
                 this.lexeme += (char)currentCharacter;

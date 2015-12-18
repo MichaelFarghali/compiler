@@ -59,14 +59,11 @@ public class Parser {
         declarations();
         subprogram_declarations();
         compound_statement();
-        System.out.println("Current Token is " +currentToken);
         match(TokenType.PERIOD);
         if( currentToken != null){
             System.out.println("File not empty");
             error();
         }
-        //TODO
-        //Check if the filestream is empty
     }
 
     public void identifier_list() {
@@ -81,7 +78,7 @@ public class Parser {
      * Implements part of declarations that is declarations -> lambda.
      */
     public void declarations() {
-        //TODO CORRRECT mulitiple variable type issue
+        
         System.out.println("declarations");
         if (currentToken == TokenType.VAR) {
             match(TokenType.VAR);
@@ -98,8 +95,19 @@ public class Parser {
      * Implements type -> standard_type
      */
     public void type() {
-        standard_type();
-        //TODO ADD ARRAY OPTION
+        System.out.println("In type: currentToken = " + currentToken);
+        if ( currentToken == TokenType.ARRAY){
+            match(TokenType.ARRAY);
+            match(TokenType.L_BRACKET);
+            match(TokenType.NUM);
+            match(TokenType.COLON);
+            match(TokenType.NUM);
+            match(TokenType.R_BRACKET);
+            match(TokenType.OF);
+            standard_type();
+        }
+        else
+            standard_type();        
     }
 
     public void standard_type() {
@@ -115,7 +123,7 @@ public class Parser {
      * subprogram_declarations -> lambda.
      */
     public void subprogram_declarations() {
-        System.out.println("subprogram_declarations" + currentToken);
+        System.out.println("subprogram_declarations");
             if ( currentToken == TokenType.FUNCTION ||
                  currentToken == TokenType.PROCEDURE){
                 
@@ -182,13 +190,18 @@ public class Parser {
      */
     public void optional_statements() {
         System.out.println("optional_statements");
-        if (currentToken == TokenType.ID){
+        if ( currentToken == TokenType.ID ||
+             currentToken == TokenType.IF||
+             currentToken == TokenType.WHILE ||
+             currentToken == TokenType.READ ||
+             currentToken == TokenType.WRITE){
+            
             statement_list();
         }
     }
     
     public void statement_list(){
-        System.out.println("optional_statements");
+        System.out.println("statement_list");
         statement();
         while (currentToken == TokenType.SEMICOLON){
             match(TokenType.SEMICOLON);
@@ -197,6 +210,7 @@ public class Parser {
     }
     
     public void statement(){
+        System.out.println("En statement");
         if(currentToken == TokenType.ID) {
             variable();
             match(TokenType.ASSIGN);
@@ -231,6 +245,7 @@ public class Parser {
     }
     
     public void variable(){
+        System.out.println("En Variable");
         match(TokenType.ID);
         if (currentToken == TokenType.L_BRACKET){
             expression();
@@ -239,6 +254,7 @@ public class Parser {
     }
     
     public void expression(){
+        System.out.println("En expression");
         simple_expression();
         if ( currentToken == TokenType.EQUALS){
             match(TokenType.EQUALS);
@@ -268,6 +284,7 @@ public class Parser {
     }
     
     public void simple_expression(){
+        System.out.println("En simple expression");
         if( currentToken == TokenType.PLUS ||
             currentToken == TokenType.MINUS){
             
@@ -282,6 +299,7 @@ public class Parser {
     }
     
     public void simple_part(){
+        System.out.println("En simple_part");
         if (currentToken == TokenType.PLUS) {
             match(TokenType.PLUS);
             term();
@@ -300,11 +318,13 @@ public class Parser {
     }
     
     public void term(){
+        System.out.println("En term");
         factor();
         term_part();
     }
     
     public void term_part(){
+        System.out.println("En term_part");
         while( currentToken == TokenType.MULTIPLY ||
                currentToken == TokenType.DIVIDE ||
                currentToken == TokenType.DIV ||
@@ -318,6 +338,7 @@ public class Parser {
     }
     
     public void factor(){
+        System.out.println("In Factor: ");
         if( currentToken == TokenType.ID){
             match(TokenType.ID);
             if( currentToken == TokenType.L_BRACKET){
@@ -348,6 +369,7 @@ public class Parser {
     }
     
     public void expression_list(){
+        System.out.println("in expression list ");
         expression();
         if (currentToken == TokenType.COMMA){
             match(TokenType.COMMA);
@@ -384,8 +406,8 @@ public class Parser {
      * Handles an error. Prints out the existence of an error and then exits.
      */
     public void error() {
-        System.out.println("error: Line " + scanner.getCount() + " No match found "
-                + "for: " + scanner.getLexeme());
+        System.out.println("error: Line " + scanner.getCount()+" No match found"
+                + " for: " + scanner.getLexeme() );
         System.exit(1);
     }
 

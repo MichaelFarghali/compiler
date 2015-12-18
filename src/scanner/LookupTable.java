@@ -37,6 +37,7 @@ public class LookupTable extends Hashtable<String,TokenType> {
         this.put("write", TokenType.WRITE);
         this.put("or", TokenType.OR);
         this.put("not", TokenType.NOT);
+        this.put("of", TokenType.OF);
         // Symbols
         this.put( "+", TokenType.PLUS);
         this.put( "-", TokenType.MINUS);        
@@ -59,7 +60,6 @@ public class LookupTable extends Hashtable<String,TokenType> {
         this.put( "{", TokenType.R_CURLY_BRACE);
         this.put( "}", TokenType.L_CURLY_BRACE);
         this.put( "=", TokenType.EQUALS);
-               
         
     }
 }

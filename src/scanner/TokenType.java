@@ -30,6 +30,7 @@ public enum TokenType {
     OR,
     NUM,
     NOT,
+    OF,
     
     
     PLUS,
