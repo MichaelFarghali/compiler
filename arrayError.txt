@@ -1,0 +1,7 @@
+program foo;
+
+var var1 : array[10] of integer;
+
+begin
+end
+.

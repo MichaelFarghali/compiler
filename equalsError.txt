@@ -1,0 +1,7 @@
+program foo;
+begin
+
+var1 = 5
+
+end
+.

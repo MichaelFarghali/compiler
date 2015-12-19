@@ -281,6 +281,7 @@ public class Scanner {
                     }
                     // Check for ID names that illegaly start with number
                     else if (Character.isLetter(currentCharacter)){
+                        currentLexeme += (char) currentCharacter;
                         stateNumber = ERROR;
                     }
                     // Keep reading in more digits for int
@@ -364,7 +365,6 @@ public class Scanner {
         this.lexeme = currentLexeme;
         if (stateNumber == ERROR) {
             this.type = null;
-            System.out.println("In error state");
             //Eat any trailing digits or letters in error
             currentCharacter = getNextChar();
             while( Character.isDigit((char)currentCharacter) ||

@@ -1,0 +1,6 @@
+program foo;
+
+begin
+end
+.
+asdf

@@ -1,0 +1,6 @@
+program foo;
+
+begin 
+5isNotValid := 5
+end
+.

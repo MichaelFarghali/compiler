@@ -1,0 +1,5 @@
+program id; 
+begin
+var var1;
+end
+.

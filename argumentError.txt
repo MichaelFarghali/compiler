@@ -1,0 +1,7 @@
+program foo;
+
+function f (someVar);
+
+begin
+end
+.

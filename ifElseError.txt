@@ -1,0 +1,8 @@
+program foo;
+
+begin
+if(someVar)
+then
+var1 := 5
+end
+.
