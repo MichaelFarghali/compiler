@@ -365,6 +365,7 @@ public class Scanner {
         if (stateNumber == ERROR) {
             this.type = null;
             System.out.println("In error state");
+            //Eat any trailing digits or letters in error
             currentCharacter = getNextChar();
             while( Character.isDigit((char)currentCharacter) ||
                    Character.isLetter((char)currentCharacter)){

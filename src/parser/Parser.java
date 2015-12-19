@@ -7,15 +7,21 @@ import java.io.File;
 /**
  * The Parser class will eventually process a source file and create a parse
  * tree or reject the source as invalid using top down recursive descent
- * parsing.
+ * parsing. For now it only recognizes valid tokens according to the production
+ * rules
  *
- * @Michael Farghali
+ * @author Michael Farghali
  */
 public class Parser {
 
     private Scanner scanner;  // The Scanner
     private TokenType currentToken;  // The TokenType variable 
-
+    /**
+     * The Parser constructor creates a File variable which it passes to a new
+     * instance of the Scanner class. It then loads the first token to be 
+     * processed. 
+     * @param filename The name of the input file to be parsed.
+     */
     public Parser(String filename) {
         // Create a file variable and an instance of scanner with specified file
         File input = new File(filename);
@@ -24,35 +30,46 @@ public class Parser {
         scanner.nextToken();
         currentToken = scanner.getToken();
     }
-
+    /**
+     * The match function checks that the currentToken matches the expectedToken
+     * if not it goes to error function. If the two match it then loads the next
+     * token or if no token available it displays that the end of file has been
+     * reached or that the scanner stopped on an invalid token. 
+     * 
+     * @param expectedToken The TokenType that is expected according to 
+     * production rules
+     */
     public void match(TokenType expectedToken) {
-        System.out.println("match " + expectedToken + " with current " + currentToken + ":" + scanner.getLexeme());
+        System.out.println("match " + expectedToken + " with current " + 
+                currentToken + ":" + scanner.getLexeme());
         if (currentToken == expectedToken) {
             boolean scanResult = scanner.nextToken();
+            // If there's a next token assigne to currentToken
             if (scanResult) {
                 currentToken = scanner.getToken();
-            } else {
+            } 
+            //If scanner.nextToken returns false check for EOF or invalid token
+            else {
                 System.out.println("No Token Available");
-                String lexeme = scanner.getLexeme();
+                String lexeme = scanner.getLexeme(); //Check if string is null
                 if (lexeme == null) {
                     System.out.println("End of file");
                 } else {
                     System.out.println("Scanner barfed on " + lexeme);
                 }
             }
-            //System.out.println("   next token is now " + currentToken);
-            //System.out.println("   next attri is now " + scanner.getAttribute());
-        } else {
+        } 
+        else {
             error();  // We don't match!
         }
-    }
+    }//end match
 
     /**
-     * Implements program -> program id ; declarations subprogram_declarations
-     * compound_statement .
+     * Implements program -&gt; program id ; declarations subprogram_declarations
+     *                       compound_statement .
+     * The program function also checks that there is no data after the period
      */
     public void program() {
-        System.out.println("program");
         match(TokenType.PROGRAM);
         match(TokenType.ID);
         match(TokenType.SEMICOLON);
@@ -60,26 +77,30 @@ public class Parser {
         subprogram_declarations();
         compound_statement();
         match(TokenType.PERIOD);
+        //If there's still data in the file stream go to error
         if( currentToken != null){
             System.out.println("File not empty");
             error();
         }
-    }
-
+    }//end program
+    
+    /**
+     * Implements identifier_list -&gt; id | id, identifier_list
+     */
     public void identifier_list() {
         match(TokenType.ID);
         while (currentToken == TokenType.COMMA) {
             match(TokenType.COMMA);
             match(TokenType.ID);
         }
-    }
+    }//end identifier_list
 
     /**
-     * Implements part of declarations that is declarations -> lambda.
+     * Implements declarations -&gt; var identifier_list : type ; declarations |
+     *                            lambda
      */
     public void declarations() {
-        
-        System.out.println("declarations");
+        //If there is a variable declaration process it. Else do nothing
         if (currentToken == TokenType.VAR) {
             match(TokenType.VAR);
             identifier_list();
@@ -88,14 +109,14 @@ public class Parser {
             match(TokenType.SEMICOLON);
             declarations();
         }
-
-    }
+    }//end declarations
 
     /**
-     * Implements type -> standard_type
+     * Implements type -&gt; standard_type |
+     *                    array[num : num] of standard_type
      */
     public void type() {
-        System.out.println("In type: currentToken = " + currentToken);
+        // Check if there is an array being declared
         if ( currentToken == TokenType.ARRAY){
             match(TokenType.ARRAY);
             match(TokenType.L_BRACKET);
@@ -108,88 +129,102 @@ public class Parser {
         }
         else
             standard_type();        
-    }
-
+    }//end type
+    
+    /**
+     * Implements standard_type -&gt; integer | real
+     */
     public void standard_type() {
         if (currentToken == TokenType.INTEGER) {
             match(TokenType.INTEGER);
         } else {
             match(TokenType.REAL);
         }
-    }
+    }//end standard_type
 
     /**
-     * Implements the part of subprogram_declarations that is
-     * subprogram_declarations -> lambda.
+     * Implements subprogram_declarations -&gt; subprogram_declaration;
+     *                                       subprogram_declarations | lambda
      */
     public void subprogram_declarations() {
-        System.out.println("subprogram_declarations");
+        // If a function or procedure is declared go to subprogram_declaration
             if ( currentToken == TokenType.FUNCTION ||
                  currentToken == TokenType.PROCEDURE){
                 
                 subprogram_declaration();
                 match(TokenType.SEMICOLON);
                 subprogram_declarations();
-            }
-           
-    }
-
+            }           
+    }//end subprogram_declaration
+    
+    /**
+     * Implements subprogram_declaration -&gt; subprogram_head declarations
+     *                                      subprogram_declarations
+     *                                      compound_statement
+     */
     public void subprogram_declaration() {
-        System.out.println("subprogram_declaration");
         subprogram_head();
         declarations();
         subprogram_declarations();
         compound_statement();
-    }
-
+    }//end subprogram_declaration
+    
+    /**
+     * Implements subprogram_head -&gt; function id arguments : standard_type ; |
+     *                               procedure id arguments
+     */
     public void subprogram_head() {
-        System.out.println("subprogram_head");
         match(TokenType.FUNCTION);
         match(TokenType.ID);
         arguments();
         match(TokenType.COLON);
         standard_type();
         match(TokenType.SEMICOLON);
-    }
+    }//end subprogram_head
     
+    /**
+     * Implements arguments -&gt; ( parameter_list ) | lambda
+     */
     public void arguments() {
-        System.out.println("arguements");
         if ( currentToken == TokenType.L_PARENTHESES){
             match(TokenType.L_PARENTHESES);
             parameter_list();
             match(TokenType.R_PARENTHESES);
         }
-    }
+    }//end arguments
+    
     /**
      * Implements EBNF production rule 
-     * parameter_list -> identifier_list : type { ; identifier_list : type}
+     * parameter_list -&gt; identifier_list : type { ; identifier_list : type}
      */
     public void parameter_list(){
         identifier_list();
         match(TokenType.COLON);
         type();
+        // If there's a semicolon after a varaible eat semicolon and get next
+        // variable
         while (currentToken == TokenType.SEMICOLON){
             match(TokenType.SEMICOLON);
             parameter_list();
         }
-    }
+    }//end parameter_list
 
     /**
-     * Implements compound_statement -> begin optional_statements end
+     * Implements compound_statement -&gt; begin optional_statements end
      */
     public void compound_statement() {
-        System.out.println("compound_statement");
         match(TokenType.BEGIN);
         optional_statements();
         match(TokenType.END);
-    }
+    }//end compound_statement
 
     /**
-     * Implements the part of optional_statements that is optional_statements ->
+     * Implements optional_statements -&gt; statement_list | lambda
      * lambda.
      */
     public void optional_statements() {
-        System.out.println("optional_statements");
+        //If currentToken is a variable id, if, while, read, or write statement
+        //go to statement_list
         if ( currentToken == TokenType.ID ||
              currentToken == TokenType.IF||
              currentToken == TokenType.WHILE ||
@@ -198,28 +233,39 @@ public class Parser {
             
             statement_list();
         }
-    }
+    }//end optional_statements
     
+    /**
+     * Implements statement_list -&gt; statement | statement ; statement_list
+     */
     public void statement_list(){
-        System.out.println("statement_list");
         statement();
+        //If there's a semicolon eat token and get next statement
         while (currentToken == TokenType.SEMICOLON){
             match(TokenType.SEMICOLON);
             statement_list();
         }
-    }
+    }//end statement_list
     
+    /**
+     * Implements statement -&gt; variable assignop expression |
+     *                         procedure_statement (not currently working) |
+     *                         compound_statement |
+     *                         if expression then statement else statement |
+     *                         while expression do statement |
+     *                         read | write (read, write currently treated as id)
+     */
     public void statement(){
-        System.out.println("En statement");
+        //If currentToken is variable process match variable statement
         if(currentToken == TokenType.ID) {
             variable();
             match(TokenType.ASSIGN);
             expression();
         }
+        //if currentToken is begin go to compound_statement
         else if (currentToken == TokenType.BEGIN){
-            System.out.println("in statement() Token:" );
             compound_statement();
-        }
+        }//if currentToken is IF process if then else statement block
         else if (currentToken == TokenType.IF){
             match(TokenType.IF);
             expression();
@@ -227,7 +273,7 @@ public class Parser {
             statement();
             match(TokenType.ELSE);
             statement();
-        }
+        }//if currentToken is while process while do statements
         else if (currentToken == TokenType.WHILE){
             match(TokenType.WHILE);
             expression();
@@ -239,23 +285,30 @@ public class Parser {
         }
         else if (currentToken == TokenType.WRITE){
             match(TokenType.WRITE); // Treating as keyword for now
-        }
+        }//Go to error for anything else
         else
             error();
-    }
+    }//end statement
     
+    /**
+     * Implements variable -&gt; id | id [expression]
+     */
     public void variable(){
-        System.out.println("En Variable");
         match(TokenType.ID);
         if (currentToken == TokenType.L_BRACKET){
             expression();
             match(TokenType.R_BRACKET);
         }
-    }
+    }//end variable
     
+    /**
+     * Implements expression -&gt; simple_expression | 
+     *                          simple_expression relop simple_expression
+     */
     public void expression(){
-        System.out.println("En expression");
-        simple_expression();
+        simple_expression(); 
+        //Check for relop's <, >, <=, >=, <>, =. If found match and get next
+        //simple expression
         if ( currentToken == TokenType.EQUALS){
             match(TokenType.EQUALS);
             simple_expression();
@@ -279,12 +332,14 @@ public class Parser {
         else if ( currentToken == TokenType.GREATER_THAN){
             match(TokenType.GREATER_THAN);
             simple_expression();
-        }           
-        
-    }
+        }                   
+    }//end expression
     
+    /**
+     * Implements simple_expression -&gt; term simple_part | lambda
+     */
     public void simple_expression(){
-        System.out.println("En simple expression");
+        //If the number is signed go to sign then call term, simple_part
         if( currentToken == TokenType.PLUS ||
             currentToken == TokenType.MINUS){
             
@@ -296,10 +351,13 @@ public class Parser {
             term();
             simple_part();
         }        
-    }
+    }//end simple_expression
     
+    /**
+     * Implements simple_part -&gt; addop term simple_part | lambda
+     */
     public void simple_part(){
-        System.out.println("En simple_part");
+        //Match one of the addops +, -, OR 
         if (currentToken == TokenType.PLUS) {
             match(TokenType.PLUS);
             term();
@@ -315,16 +373,22 @@ public class Parser {
             term();
             simple_part();
         }
-    }
+    }//end simple_part
     
+    /**
+     * Implements term -&gt; factor term_part
+     */
     public void term(){
-        System.out.println("En term");
         factor();
         term_part();
-    }
+    }//end term
     
+    /**
+     * Implements term_part -&gt; mulop factor term_part | lambda
+     */
     public void term_part(){
-        System.out.println("En term_part");
+        //While there is a mulop ( *,/,div, mod, and) go to mulop then factor
+        //and term_part
         while( currentToken == TokenType.MULTIPLY ||
                currentToken == TokenType.DIVIDE ||
                currentToken == TokenType.DIV ||
@@ -335,55 +399,70 @@ public class Parser {
             factor();
             term_part();
         }          
-    }
+    }//end term_part
     
+    /**
+     * Implements factor -&gt; id | id[expression] | id(expression_list) | num |
+     *                      (expression) | not factor
+     */
     public void factor(){
-        System.out.println("In Factor: ");
+        //If ID or ID[expression] or ID(expression_list) then match accordingly
         if( currentToken == TokenType.ID){
             match(TokenType.ID);
+            //If id[expression] match brackets and go to expression
             if( currentToken == TokenType.L_BRACKET){
                 match(TokenType.L_BRACKET);
                 expression();
                 match(TokenType.R_BRACKET);
-            }
+            }//If id(expression) match parenthesis and go to expression_list
             else if ( currentToken == TokenType.L_PARENTHESES){
                 match(TokenType.L_PARENTHESES);
                 expression_list();
                 match(TokenType.R_PARENTHESES);
             }
-        }
+        }//If num then match the number
         else if( currentToken == TokenType.NUM){
             match(TokenType.NUM);
-        }
+        }//If (expression) match parenthesis and go to expression
         else if( currentToken == TokenType.L_PARENTHESES){
             match(TokenType.L_PARENTHESES);
             expression();
             match(TokenType.R_PARENTHESES);
-        }
+        }//if not match and make recursive call to factor
         else if( currentToken == TokenType.NOT){
             match(TokenType.NOT);
             factor();
-        }
+        }//For anything else go to error
         else
             error();
-    }
+    }//end factor
     
+    /**
+     * Implements -&gt; expression | expression, expression_list
+     */
     public void expression_list(){
-        System.out.println("in expression list ");
         expression();
+        //If theres a comma after expression call expression again
         if (currentToken == TokenType.COMMA){
             match(TokenType.COMMA);
             expression_list();
         }
-    }
+    }//end expression_list
     
+    /**
+     * Implements sign - &gt; + | -
+     */
     public void sign(){
         if ( currentToken == TokenType.PLUS)
             match(TokenType.PLUS);
         else
             match(TokenType.MINUS);
-    }    
+    }//end sign
     
+    /**
+     * The mulop function matches the currentToken to one of the mulop's
+     * ( *, /, mod, div, and )
+     */
     public void mulop(){
         if ( currentToken == TokenType.MULTIPLY) {
             match(TokenType.MULTIPLY);
@@ -400,15 +479,17 @@ public class Parser {
         else if (currentToken == TokenType.AND) {
             match(TokenType.AND);
         }
-    }
+    }//end mulop
 
     /**
-     * Handles an error. Prints out the existence of an error and then exits.
+     * The error function displays the line of code where an error was found 
+     * and the string that is related to the error. It then exits the program
+     * with parameter 1
      */
     public void error() {
         System.out.println("error: Line " + scanner.getCount()+" No match found"
                 + " for: " + scanner.getLexeme() );
         System.exit(1);
-    }
+    }//end error
 
 }//end parser

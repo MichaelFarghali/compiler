@@ -3,7 +3,7 @@ package parser;
 
 /**
  * The ParseTest class checks that Parse class is working as expected
- * @Michael Farghali
+ * @author Michael Farghali
  */
 public class ParseTest {
     
