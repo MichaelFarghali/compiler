@@ -22,7 +22,7 @@ public class SymbolTable {
         data.kind = IdKind.PROGRAM;
         table.put(data.lexeme, data);
       
-      return true;
+        return true;
     }
     public boolean addFunctionName(String name)
     {
@@ -66,6 +66,61 @@ public class SymbolTable {
         
         return true;
     }
+    public boolean isProgName(String name){
+        // Create instance of DataStruct using records from Hashtable
+        DataStruct data = (DataStruct) table.get(name);
+        // If no data found with associated name then return false
+        if(data == null)
+            return false;
+        // If the data type matches Program return true
+        if(data.kind == IdKind.PROGRAM)
+            return true;
+        return false; // All else return false
+    }
+    public boolean isFuncName(String name){
+        // Create instance of DataStruct using records from Hashtable
+        DataStruct data = (DataStruct) table.get(name);
+        // If no data found with associated name then return false
+        if(data == null)
+            return false;
+        // If the data type matches Func return true
+        if(data.kind == IdKind.FUNC)
+            return true;
+        return false; // All else return false
+    }
+    public boolean isProcName(String name){
+        // Create instance of DataStruct using records from Hashtable
+        DataStruct data = (DataStruct) table.get(name);
+        // If no data found with associated name then return false
+        if(data == null)
+            return false;
+        // If the data type matches type PROC return true
+        if(data.kind == IdKind.PROC)
+            return true;
+        return false; // All else return false
+    }
+    public boolean isVarName(String name){
+        // Create instance of DataStruct using records from Hashtable
+        DataStruct data = (DataStruct) table.get(name);
+        // If no data found with associated name then return false
+        if(data == null)
+            return false;
+        // If the data type matches VAR return true
+        if(data.kind == IdKind.VAR)
+            return true;
+        return false; // All else return false
+    }
+    public boolean isArrayName(String name){
+        // Create instance of DataStruct using records from Hashtable
+        DataStruct data = (DataStruct) table.get(name);
+        // If no data found with associated name then return false
+        if(data == null)
+            return false;
+        // If the data type matches ARRAY return true
+        if(data.kind == IdKind.ARRAY)
+            return true;
+        return false; // All else return false
+    }
     private class DataStruct {
         
         private String lexeme;
@@ -83,6 +138,6 @@ public class SymbolTable {
         PROC,
         VAR,
         ARRAY,        
-    }
+    }//end IdKind
     
-}
+}//end SymbolTable 
