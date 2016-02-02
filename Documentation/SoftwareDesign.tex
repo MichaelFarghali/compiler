@@ -27,12 +27,24 @@ The Parser class processes a text file token by token which are given by the Sca
 \begin{figure}[!ht]
 	\includegraphics[width=\textwidth]{ScannerDFA.jpg}
 \end{figure}
+
+
 \section{List of Keywords}
 Symbols: $ . , - + * / ( ) { } [ ] { } < <= > >= : := ;$  
 \newline
 Keywords: div, mod, and, program, id, var, array, of, num, integer, real, function, procedure, begin, end, if, then, else, while, do, not
 \section{Grammar Rules}
 \includepdf[pages=-, scale=.8, noautoscale = true]{Grammar.pdf}
+\section{UML Diagrams}
+\begin{figure}
+	\includegraphics{ScannerUML.png}
+\end{figure}
+\begin{figure}
+	\includegraphics{ParserUML.png}
+\end{figure}
+\begin{figure}
+	\includegraphics{SymTableUML.png}
+\end{figure}
 \end{appendices}
 
 
