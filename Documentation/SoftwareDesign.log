@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2015.10.29)  2 FEB 2016 16:09
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2015.10.29)  9 FEB 2016 13:00
 entering extended mode
 **SoftwareDesign.tex
 (SoftwareDesign.tex
@@ -240,14 +240,11 @@ File: Grammar.pdf Graphic file (type pdf)
 Package pdftex.def Info: Grammar.pdf, page3 used on input line 37.
 (pdftex.def)             Requested size: 491.43666pt x 635.97687pt.
  [5 <./Grammar.pdf>]
-<ScannerUML.png, id=97, 246.9225pt x 605.26125pt>
+<ScannerUML.png, id=97, 225.84375pt x 300.12125pt>
 File: ScannerUML.png Graphic file (type png)
  <use ScannerUML.png>
 Package pdftex.def Info: ScannerUML.png used on input line 40.
-(pdftex.def)             Requested size: 246.92188pt x 605.25975pt.
-
-
-LaTeX Warning: Float too large for page by 55.25975pt on input line 41.
+(pdftex.def)             Requested size: 225.84319pt x 300.12051pt.
 
 <ParserUML.png, id=98, 429.605pt x 653.44125pt>
 File: ParserUML.png Graphic file (type png)
@@ -268,8 +265,8 @@ File: SymTableUML.png Graphic file (type png)
 Package pdftex.def Info: SymTableUML.png used on input line 46.
 (pdftex.def)             Requested size: 287.0718pt x 319.19171pt.
 
-[6] [7 <./ScannerUML.png (PNG copy)>] [8 <./ParserUML.png (PNG copy)>] [9 <./Sy
-mTableUML.png (PNG copy)>] (SoftwareDesign.aux) ) 
+[6 <./ScannerUML.png (PNG copy)>] [7 <./ParserUML.png (PNG copy)>] [8 <./SymTab
+leUML.png (PNG copy)>] (SoftwareDesign.aux) ) 
 Here is how much of TeX's memory you used:
  2574 strings out of 493698
  35576 string characters out of 3144414
@@ -278,15 +275,15 @@ Here is how much of TeX's memory you used:
  7280 words of font info for 26 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
  40i,19n,46p,415b,473s stack positions out of 5000i,500n,10000p,200000b,50000s
-<C:/Program Files/MiKTeX 2.9/f
-onts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files/MiKTeX 2.9/fonts/typ
-e1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/publi
-c/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfont
-s/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr1
-7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on SoftwareDesign.pdf (9 pages, 245871 bytes).
+<C:/Program Files/MiKTeX 2.9/fonts
+/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/p
+ublic/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/am
+sfonts/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm
+/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pf
+b><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on SoftwareDesign.pdf (8 pages, 242123 bytes).
 PDF statistics:
- 133 PDF objects out of 1000 (max. 8388607)
+ 130 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  51 words of extra memory for PDF output out of 10000 (max. 10000000)
 
