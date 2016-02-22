@@ -282,13 +282,14 @@ public class Parser {
      *                         read | write (read, write currently treated as id)
      */
     public void statement(){
-        //If currentToken is variable process match variable statement
+        //If TokenType is type ID then check SymbolTable if it's a variable 
+        //or a procedure ID 
         if(currentToken == TokenType.ID) {
             if (st.isVarName(scanner.getLexeme())){
-                variable();
+                variable(); // Process variable
                 match(TokenType.ASSIGN);
                 expression();
-            }
+            } // Process procedure
             else if(st.isProcName(scanner.getLexeme())){
                 procedure_statement();
             }

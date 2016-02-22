@@ -48,6 +48,10 @@ public class SymbolTableTest {
         boolean expResult = true;
         boolean result = instance.addProgramName(name);
         assertEquals(expResult, result);
+        // Test that you can't add a program ID that already exists in table
+        expResult = false;
+        result = instance.addProgramName(name);
+        assertEquals(expResult, result);
     }
 
     /**
@@ -60,6 +64,10 @@ public class SymbolTableTest {
         SymbolTable instance = new SymbolTable();
         boolean expResult = true;
         boolean result = instance.addFunctionName(name);
+        assertEquals(expResult, result);        
+        // Test that you can't add a function ID that already exists in table
+        expResult = false;
+        result = instance.addFunctionName(name);
         assertEquals(expResult, result);
     }
 
@@ -73,6 +81,10 @@ public class SymbolTableTest {
         SymbolTable instance = new SymbolTable();
         boolean expResult = true;
         boolean result = instance.addProcName(name);
+        assertEquals(expResult, result);        
+       // Test that you can't add a procedure ID that already exists in table
+        expResult = false;
+        result = instance.addProcName(name);
         assertEquals(expResult, result);
     }
 
@@ -87,6 +99,10 @@ public class SymbolTableTest {
         boolean expResult = true;
         boolean result = instance.addVarName(name);
         assertEquals(expResult, result);
+        // Test that you can't add a variable ID that already exists in table
+        expResult = false;
+        result = instance.addVarName(name);
+        assertEquals(expResult, result);
     }
 
     /**
@@ -99,6 +115,10 @@ public class SymbolTableTest {
         SymbolTable instance = new SymbolTable();
         boolean expResult = true;
         boolean result = instance.addArrayName(name);
+        assertEquals(expResult, result);
+        // Test that you can't add an array ID that already exists in table
+        expResult = false;
+        result = instance.addArrayName(name);
         assertEquals(expResult, result);
     }
 
@@ -217,7 +237,7 @@ public class SymbolTableTest {
         String expected = String.format("%-20s %-20s %-15s %-15s %15s", "Name", 
                 "Kind", "Array", "Start Index", "End Index") + "\n";
         String result = instance.myToString();
-        System.out.println(instance.myToString());
+        //System.out.println(instance.myToString());
         assertEquals(expected, result);
         
               
