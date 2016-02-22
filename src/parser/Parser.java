@@ -3,6 +3,7 @@ package parser;
 import scanner.Scanner;
 import scanner.TokenType;
 import java.io.File;
+import symbol.table.SymbolTable;
 
 /**
  * The Parser class will eventually process a source file and create a parse
@@ -16,6 +17,7 @@ public class Parser {
 
     private Scanner scanner;  // The Scanner
     private TokenType currentToken;  // The TokenType variable 
+    private SymbolTable st;
     /**
      * The Parser constructor creates a File variable which it passes to a new
      * instance of the Scanner class. It then loads the first token to be 
@@ -25,8 +27,9 @@ public class Parser {
     public Parser(String filename) {
         // Create a file variable and an instance of scanner with specified file
         File input = new File(filename);
+        st = new SymbolTable();
         scanner = new Scanner(input);
-        // Load in the first token as a lookahead token and assign to current
+        // Load in the first token as a look ahead token and assign to current
         scanner.nextToken();
         currentToken = scanner.getToken();
     }
@@ -62,6 +65,7 @@ public class Parser {
         else {
             error();  // We don't match!
         }
+
     }//end match
 
     /**
@@ -71,27 +75,35 @@ public class Parser {
      */
     public void program() {
         match(TokenType.PROGRAM);
+        //add program name to symbol table
+        st.addProgramName(scanner.getLexeme());
         match(TokenType.ID);
         match(TokenType.SEMICOLON);
         declarations();
         subprogram_declarations();
         compound_statement();
+        //Print out the symbol table
+        System.out.println(st.myToString());
         match(TokenType.PERIOD);
         //If there's still data in the file stream go to error
         if( currentToken != null){
             System.out.println("File not empty");
             error();
-        }
+        }        
     }//end program
     
     /**
      * Implements identifier_list -&gt; id | id, identifier_list
      */
     public void identifier_list() {
+        //Add ID to symbol table
+        st.addVarName(scanner.getLexeme());
         match(TokenType.ID);
+        // While there's still commas match IDs and add to symbol table
         while (currentToken == TokenType.COMMA) {
             match(TokenType.COMMA);
-            match(TokenType.ID);
+            st.addVarName(scanner.getLexeme());
+            match(TokenType.ID);            
         }
     }//end identifier_list
 
@@ -118,6 +130,8 @@ public class Parser {
     public void type() {
         // Check if there is an array being declared
         if ( currentToken == TokenType.ARRAY){
+            //Add array name to symbol table
+            st.addArrayName(scanner.getLexeme());
             match(TokenType.ARRAY);
             match(TokenType.L_BRACKET);
             match(TokenType.NUM);
@@ -174,12 +188,25 @@ public class Parser {
      *                               procedure id arguments
      */
     public void subprogram_head() {
-        match(TokenType.FUNCTION);
-        match(TokenType.ID);
-        arguments();
-        match(TokenType.COLON);
-        standard_type();
-        match(TokenType.SEMICOLON);
+        if (currentToken == TokenType.FUNCTION){
+            match(TokenType.FUNCTION);
+            //Add the function name to symbol table
+            st.addFunctionName(scanner.getLexeme());
+            match(TokenType.ID);
+            arguments();
+            match(TokenType.COLON);
+            standard_type();
+            match(TokenType.SEMICOLON);
+            }
+        else if(currentToken == TokenType.PROCEDURE){
+            match(TokenType.PROCEDURE);
+            //Add procedure name to symbol table
+            st.addProcName(scanner.getLexeme());
+            match(TokenType.ID);
+            arguments();
+            match(TokenType.SEMICOLON);
+        }
+    
     }//end subprogram_head
     
     /**
@@ -201,8 +228,7 @@ public class Parser {
         identifier_list();
         match(TokenType.COLON);
         type();
-        // If there's a semicolon after a varaible eat semicolon and get next
-        // variable
+        // If there's a semicolon after a varaible eat and get next variable
         while (currentToken == TokenType.SEMICOLON){
             match(TokenType.SEMICOLON);
             parameter_list();
@@ -258,9 +284,14 @@ public class Parser {
     public void statement(){
         //If currentToken is variable process match variable statement
         if(currentToken == TokenType.ID) {
-            variable();
-            match(TokenType.ASSIGN);
-            expression();
+            if (st.isVarName(scanner.getLexeme())){
+                variable();
+                match(TokenType.ASSIGN);
+                expression();
+            }
+            else if(st.isProcName(scanner.getLexeme())){
+                procedure_statement();
+            }
         }
         //if currentToken is begin go to compound_statement
         else if (currentToken == TokenType.BEGIN){
@@ -291,11 +322,24 @@ public class Parser {
     }//end statement
     
     /**
+     * Implements procedure_statement id | id expression_list
+     */
+    public void procedure_statement(){
+        match(TokenType.ID);
+        if(currentToken == TokenType.L_PARENTHESES){
+            match(TokenType.L_PARENTHESES);
+            expression_list();
+            match(TokenType.R_PARENTHESES);
+        }
+    }
+    
+    /**
      * Implements variable -&gt; id | id [expression]
      */
     public void variable(){
         match(TokenType.ID);
         if (currentToken == TokenType.L_BRACKET){
+            match(TokenType.L_BRACKET);
             expression();
             match(TokenType.R_BRACKET);
         }

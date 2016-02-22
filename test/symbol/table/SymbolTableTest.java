@@ -42,7 +42,7 @@ public class SymbolTableTest {
      */
     @Test
     public void testAddProgramName() {
-        System.out.println("addProgramName");
+        System.out.println("Testing addProgramName method");
         String name = "foo";
         SymbolTable instance = new SymbolTable();
         boolean expResult = true;
@@ -55,7 +55,7 @@ public class SymbolTableTest {
      */
     @Test
     public void testAddFunctionName() {
-        System.out.println("addFunctionName");
+        System.out.println("Testing addFunctionName method");
         String name = "someFunction";
         SymbolTable instance = new SymbolTable();
         boolean expResult = true;
@@ -68,7 +68,7 @@ public class SymbolTableTest {
      */
     @Test
     public void testAddProcName() {
-        System.out.println("addProcName");
+        System.out.println("Testing addProcName method");
         String name = "proc";
         SymbolTable instance = new SymbolTable();
         boolean expResult = true;
@@ -81,7 +81,7 @@ public class SymbolTableTest {
      */
     @Test
     public void testAddVarName() {
-        System.out.println("addVarName");
+        System.out.println("Testing addVarName method");
         String name = "var";
         SymbolTable instance = new SymbolTable();
         boolean expResult = true;
@@ -94,7 +94,7 @@ public class SymbolTableTest {
      */
     @Test
     public void testAddArrayName() {
-        System.out.println("addArrayName");
+        System.out.println("Testing addArrayName method");
         String name = "array";
         SymbolTable instance = new SymbolTable();
         boolean expResult = true;
@@ -107,7 +107,7 @@ public class SymbolTableTest {
      */
     @Test
     public void testIsProgName() {
-        System.out.println("isProgName");
+        System.out.println("Testing isProgName method");
         String name = "prog";
         String wrong = "wrong";
         SymbolTable instance = new SymbolTable();
@@ -129,7 +129,7 @@ public class SymbolTableTest {
      */
     @Test
     public void testIsFuncName() {
-        System.out.println("isFuncName");
+        System.out.println("Testing isFuncName method");
        String name = "fucn";
         String wrong = "wrong";
         SymbolTable instance = new SymbolTable();
@@ -151,7 +151,7 @@ public class SymbolTableTest {
      */
     @Test
     public void testIsProcName() {
-        System.out.println("isProcName");
+        System.out.println("Testing isProcName method");
         String name = "proc";
         String wrong = "wrong";
         SymbolTable instance = new SymbolTable();
@@ -173,7 +173,7 @@ public class SymbolTableTest {
      */
     @Test
     public void testIsVarName() {
-        System.out.println("isVarName");
+        System.out.println("Testing isVarName method");
         String name = "var";
         String wrong = "wrong";
         SymbolTable instance = new SymbolTable();
@@ -195,7 +195,7 @@ public class SymbolTableTest {
      */
     @Test
     public void testIsArrayName() {
-        System.out.println("isArrayName");
+        System.out.println("Testing isArrayName method");
         String name = "array";
         String wrong = "wrong";
         SymbolTable instance = new SymbolTable();
@@ -209,6 +209,18 @@ public class SymbolTableTest {
         expResult = true;
         result = instance.isArrayName(name); 
         assertEquals(expResult, result);
+    }
+    @Test
+    public void testMyToString(){
+        System.out.println("Testing myToString method");
+        SymbolTable instance = new SymbolTable();
+        String expected = String.format("%-20s %-20s %-15s %-15s %15s", "Name", 
+                "Kind", "Array", "Start Index", "End Index") + "\n";
+        String result = instance.myToString();
+        System.out.println(instance.myToString());
+        assertEquals(expected, result);
+        
+              
     }
     
 }

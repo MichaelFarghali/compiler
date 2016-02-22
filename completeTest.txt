@@ -6,30 +6,16 @@ program HelloWorld;
 var var1, var2 : integer;
 var var3 : real;
 var aray : array[0:5] of integer;
-
+procedure proc;
 function f (args: integer; args2 : integer) : integer;
     begin
-    someVar  := var1;
-
-    if(i >10) then
-        i := i + 1
+    
+    if(args >10) then
+        args := args + 1
     else
-        k := 10e+5
+        var1 := 10e+5    
     end;
 
 begin
-
-var3 :=5; 
-read;
-write;
-
-
-while(var1 <> 5)
-do
-var2 := var1 mod 5;
-somVar := 2/1;
-somOtherVar := 5.5 div 3;
-opt := 1.4 and 3
-
 end
-. 
+.

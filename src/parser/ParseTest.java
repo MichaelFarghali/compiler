@@ -10,11 +10,13 @@ public class ParseTest {
     public static void main(String args[])
     {
         
-        Parser parse = new Parser("equalsError.txt");
+        Parser parse = new Parser("completeTest.txt");
         
-        parse.program();        
+        parse.program();    
+        
+       
             
-        
+       
     }
     
     

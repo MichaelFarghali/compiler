@@ -2,7 +2,9 @@
 package symbol.table;
 
 
+import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Set;
 /**
  * The Symbol Table class creates a Hashtable which accepts objects of type
  * (String, DataStruct). The IDs (Program ID, variable ID,..etc.) are the 
@@ -13,7 +15,11 @@ import java.util.Hashtable;
  */
 public class SymbolTable {
     
-    Hashtable table = new Hashtable<String, DataStruct>();
+    Hashtable<String, DataStruct> table;// = new Hashtable<String, DataStruct>();
+    
+    public SymbolTable(){
+        table = new Hashtable<String, DataStruct>();
+    }
     /**
      * The addProgramName method checks if the ID name already exists as a Program
      * ID if so it returns false. If it doesn't already exist then it is added
@@ -24,13 +30,13 @@ public class SymbolTable {
     public boolean addProgramName(String name)
     {
         // Check that the program name is not already in table
-        if(table.containsKey(name))
+        if(this.table.containsKey(name))
             return false;
         //If not being used create instance of DataStruct and add data
         DataStruct data = new DataStruct();
         data.lexeme = name;
         data.kind = IdKind.PROGRAM;
-        table.put(data.lexeme, data);
+        this.table.put(data.lexeme, data);
       
         return true;
     }
@@ -81,14 +87,14 @@ public class SymbolTable {
      */
     public boolean addVarName(String name){
         //Check if variable name alredy exists, if so return false
-        if(table.containsKey(name))
+        if(this.table.containsKey(name))
             return false;
         //If doesn't exist, create instance of DataStruct with data then add
         //name and data to Hashtable
         DataStruct data = new DataStruct();
         data.lexeme = name;
         data.kind = IdKind.VAR;
-        table.put(data.lexeme, data);
+        this.table.put(data.lexeme, data);
         
         return true;
     }
@@ -191,6 +197,22 @@ public class SymbolTable {
         if(data.kind == IdKind.ARRAY)
             return true;
         return false; // All else return false
+    }
+   
+   
+    public String myToString()
+    {
+        String ans = String.format("%-20s %-20s %-15s %-15s %15s", "Name", 
+                "Kind", "Array", "Start Index", "End Index") + "\n";
+        Set<String> keys = table.keySet();
+        for (String key: keys)
+        {
+            ans += String.format("%-20s %-20s %-15s %-15s %-15s", 
+                    key, table.get(key).kind, table.get(key).array, 
+                    table.get(key).startIndex, table.get(key).endIndex) + "\n";
+            
+        }
+        return ans;
     }
     /**
      * The DataStruct inner class holds the attributes of the different id types.

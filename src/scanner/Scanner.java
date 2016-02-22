@@ -123,11 +123,11 @@ public class Scanner {
                     if (currentCharacter == -1) {
                         this.lexeme = "";
                         this.type = null;
-                        System.out.println("End of file reached.");
-                        System.exit(0);                        
+                        System.out.println("Scanner: End of file reached.");
+                        System.exit(0);    
                     } 
                     // If a new line increment the line counter
-                    if (currentCharacter == '\n'){
+                    else if (currentCharacter == '\n'){
                         countLine++;                        
                     }
                     // If reads in digit go to IN_DIGIT state
@@ -193,7 +193,6 @@ public class Scanner {
                     if (currentCharacter == -1) {
                         pushBackChar(currentCharacter);
                         stateNumber = ID_COMPLETE;
-                        System.out.println("Successfully processed file.");
                     } 
                     // Read in more letters or digits
                     else if (Character.isLetterOrDigit(currentCharacter)) {
