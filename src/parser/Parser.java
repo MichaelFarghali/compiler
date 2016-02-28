@@ -3,6 +3,7 @@ package parser;
 import scanner.Scanner;
 import scanner.TokenType;
 import java.io.File;
+import java.util.Stack;
 import symbol.table.SymbolTable;
 
 /**
@@ -17,7 +18,8 @@ public class Parser {
 
     private Scanner scanner;  // The Scanner
     private TokenType currentToken;  // The TokenType variable 
-    private SymbolTable st;
+    private SymbolTable st; //The symboltable
+    private Stack stack = new Stack();
     /**
      * The Parser constructor creates a File variable which it passes to a new
      * instance of the Scanner class. It then loads the first token to be 
@@ -96,6 +98,7 @@ public class Parser {
      * Implements identifier_list -&gt; id | id, identifier_list
      */
     public void identifier_list() {
+        
         //Add ID to symbol table
         st.addVarName(scanner.getLexeme());
         match(TokenType.ID);
@@ -131,7 +134,8 @@ public class Parser {
         // Check if there is an array being declared
         if ( currentToken == TokenType.ARRAY){
             //Add array name to symbol table
-            st.addArrayName(scanner.getLexeme());
+            //st.addArrayName(scanner.getLexeme());
+           
             match(TokenType.ARRAY);
             match(TokenType.L_BRACKET);
             match(TokenType.NUM);
@@ -161,7 +165,7 @@ public class Parser {
      *                                       subprogram_declarations | lambda
      */
     public void subprogram_declarations() {
-        // If a function or procedure is declared go to subprogram_declaration
+            //If a function or procedure is declared go to subprogram_declaration
             if ( currentToken == TokenType.FUNCTION ||
                  currentToken == TokenType.PROCEDURE){
                 
