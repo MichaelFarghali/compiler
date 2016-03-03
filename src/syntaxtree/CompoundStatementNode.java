@@ -14,21 +14,23 @@ public class CompoundStatementNode extends StatementNode{
      * Creates a CompoundStatementNode with the given attribute.
      * @param states The list of statements for this CompoundStatementNode.
      */
-    public CompoundStatementNode(ArrayList<StatementNode> states){
-        this.statements = new ArrayList<StatementNode>(states);
+    public CompoundStatementNode (){
+        this.statements = new ArrayList<StatementNode>();
     }
     
-      /** 
-     * Returns the attribute of this node.
-     * @return The attribute of this ValueNode.
-     */
-    public ArrayList getStatements() { return( this.statements);}
-    
+    public void addStatements(StatementNode states){
+        statements.add(states);
+    }
         
      @Override
     public String indentedToString( int level) {
         String answer = super.indentedToString(level);
-        answer += "Statement: " + this.statements + "\n";
+        answer += "CompoundStatementNode: \n";
+        
+        for(StatementNode i: statements){
+            answer += super.indentedToString(level +1);
+            answer += "StatementNode: " + i + "\n";
+        }
         return answer;
     }
 }

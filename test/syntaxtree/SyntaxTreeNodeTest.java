@@ -61,6 +61,7 @@ public class SyntaxTreeNodeTest {
         ProgramNode pNode = new ProgramNode("sample");
         pNode.setVariables(decsNode);
         pNode.setFunctions(subNode);
+        pNode.setMain(csNode);
        
         
               
@@ -68,7 +69,9 @@ public class SyntaxTreeNodeTest {
                           "|-- DeclarationNode: \n" + 
                           "|-- --- VariableNode: dollars\n" +
                           "|-- --- VariableNode: yen\n" +
-                          "|-- --- VariableNode: bitcoin\n";
+                          "|-- --- VariableNode: bitcoin\n" +
+                          "|-- SubProgramDeclarationsNode: \n" +
+                          "|-- CompoundStatementNode: \n";
         
         String actual = pNode.indentedToString(0);
         System.out.println(actual);
