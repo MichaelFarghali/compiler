@@ -10,21 +10,23 @@ public class DeclarationsNode extends SyntaxTreeNode{
     
     private ArrayList<VariableNode> vars;
     
-    public DeclarationsNode(ArrayList<VariableNode> var){
-        this.vars = new ArrayList<VariableNode>(var);
+    public DeclarationsNode(){
+        this.vars = new ArrayList<VariableNode>();
     }
-    
-      /** 
-     * Returns the ArrayList of declarations for this node.
-     * @return vars The declarations of this DeclarationNode.
-     */
-    public ArrayList getDeclarations() { return( this.vars);}
-    
+   
+    public void addVars(VariableNode var){
+        vars.add(var);
+    }    
         
      @Override
     public String indentedToString( int level) {
         String answer = super.indentedToString(level);
-        answer += "Declaration: " + this.vars + "\n";
+        answer += "DeclarationNode: \n";
+        
+        for(VariableNode i : vars){
+            answer += super.indentedToString(level +1);
+            answer += "VariableNode: " + i + "\n";
+        }
         return answer;
     }
     

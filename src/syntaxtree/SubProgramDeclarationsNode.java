@@ -9,16 +9,23 @@ public class SubProgramDeclarationsNode extends SyntaxTreeNode{
     
     private ArrayList<SubProgramNode> procs;
     
-    public SubProgramDeclarationsNode(ArrayList<SubProgramNode> prodecure){
-        procs = new ArrayList<>(procs);    
+    public SubProgramDeclarationsNode(){
+        this.procs = new ArrayList<SubProgramNode>();    
     }
     
-    public ArrayList getSubProgramDecs(){ return (this.procs);    }
+    public void addProcs(SubProgramNode procedure){
+        procs.add(procedure);
+    }
     
     @Override
     public String indentedToString( int level) {
         String answer = super.indentedToString(level);
-        answer += "Procedure: " + this.procs + "\n";
+        answer += "SubProgramDeclarationsNode: \n";
+        
+        for( SubProgramNode i: procs){
+            answer += super.indentedToString(level+1);
+            answer += "SubProgramNode: " + i + "\n";
+        }       
         return answer;
     }
 }
