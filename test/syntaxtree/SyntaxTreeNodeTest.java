@@ -55,14 +55,14 @@ public class SyntaxTreeNodeTest {
         CompoundStatementNode csNode = new CompoundStatementNode();       
         
         //Create instance of StatementNode
-        StatementNode stateNode = new StatementNode();
+       // StatementNode stateNode = new StatementNode();
         
         //Create instance of AssignmentNode and set left value and expression
         AssignmentStatementNode assignNode = new AssignmentStatementNode();
         assignNode.setLvalue(new VariableNode("dollars"));
         assignNode.setExpression(new ValueNode("1000000"));
         
-        csNode.addStatements(stateNode);
+        csNode.addStatements(assignNode);
         //System.out.println(assignNode.indentedToString(0));
         
         //Create ProgramNode and set Variables, Main, and Functions
@@ -78,12 +78,14 @@ public class SyntaxTreeNodeTest {
               
         String expected = "Program: sample\n" +
                           "|-- DeclarationNode: \n" + 
-                          "|-- --- VariableNode: dollars\n" +
-                          "|-- --- VariableNode: yen\n" +
-                          "|-- --- VariableNode: bitcoin\n" +
+                          "|-- --- Variable: dollars\n" +
+                          "|-- --- Variable: yen\n" +
+                          "|-- --- Variable: bitcoin\n" +
                           "|-- SubProgramDeclarationsNode: \n" +
                           "|-- CompoundStatementNode: \n" +
-                          "|-- --- AssignmentNode: \n";
+                          "|-- --- AssignmentNode: \n" +
+                          "|-- --- --- Variable: dollars\n" + 
+                          "|-- --- --- Value: 1000000\n";
         
         String actual = pNode.indentedToString(0);
         System.out.println(actual);

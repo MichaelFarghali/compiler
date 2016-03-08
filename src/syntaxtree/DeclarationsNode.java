@@ -3,8 +3,8 @@
 package syntaxtree;
 import java.util.ArrayList;
 /**
- *
- * @author user
+ * Represents one or more variable declarations
+ * @author Michael Farghali
  */
 public class DeclarationsNode extends SyntaxTreeNode{
     
@@ -13,7 +13,7 @@ public class DeclarationsNode extends SyntaxTreeNode{
     public DeclarationsNode(){
         this.vars = new ArrayList<VariableNode>();
     }
-   
+    
     public void addVars(VariableNode var){
         vars.add(var);
     }    
@@ -22,10 +22,9 @@ public class DeclarationsNode extends SyntaxTreeNode{
     public String indentedToString( int level) {
         String answer = super.indentedToString(level);
         answer += "DeclarationNode: \n";
-        
-        for(VariableNode i : vars){
-            answer += super.indentedToString(level +1);
-            answer += "VariableNode: " + i + "\n";
+        // For every variable in ArrayList call VariableNodes indentedToString
+        for(VariableNode i : vars){  
+            answer += i.indentedToString(level +1);
         }
         return answer;
     }

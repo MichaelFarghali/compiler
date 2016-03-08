@@ -2,7 +2,7 @@
 package syntaxtree;
 
 /**
- *
+ * Represents an AssignmentNode (left value and expression)
  * @author Michael Farghali
  */
 public class AssignmentStatementNode extends StatementNode{
@@ -14,10 +14,11 @@ public class AssignmentStatementNode extends StatementNode{
     public AssignmentStatementNode(){
         
     }
+    // Set the value of left variable node
     public void setLvalue(VariableNode lvalue) {
         this.lvalue = lvalue;
     }
-
+    // Set the expression node
     public void setExpression(ExpressionNode expression) {
         this.expression = expression;
     }
