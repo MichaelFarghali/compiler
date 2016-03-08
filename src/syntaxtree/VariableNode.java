@@ -2,7 +2,7 @@
 package syntaxtree;
 
 /**
- *
+ * Represents a variable in syntax tree
  * @author Michael Farghali
  */
 public class VariableNode extends ExpressionNode{

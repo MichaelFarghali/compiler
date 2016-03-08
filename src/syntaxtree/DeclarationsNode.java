@@ -13,7 +13,10 @@ public class DeclarationsNode extends SyntaxTreeNode{
     public DeclarationsNode(){
         this.vars = new ArrayList<VariableNode>();
     }
-    
+    /**
+     * Adds a VariableNode to ArrayList of variables
+     * @param var The name of the VariableNode
+     */
     public void addVars(VariableNode var){
         vars.add(var);
     }    
