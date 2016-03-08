@@ -53,15 +53,26 @@ public class SyntaxTreeNodeTest {
         
          //Create instance of CompoundStatementNode
         CompoundStatementNode csNode = new CompoundStatementNode();       
-      
+        
         //Create instance of StatementNode
         StatementNode stateNode = new StatementNode();
+        
+        //Create instance of AssignmentNode and set left value and expression
+        AssignmentStatementNode assignNode = new AssignmentStatementNode();
+        assignNode.setLvalue(new VariableNode("dollars"));
+        assignNode.setExpression(new ValueNode("1000000"));
+        
+        csNode.addStatements(stateNode);
+        //System.out.println(assignNode.indentedToString(0));
         
         //Create ProgramNode and set Variables, Main, and Functions
         ProgramNode pNode = new ProgramNode("sample");
         pNode.setVariables(decsNode);
         pNode.setFunctions(subNode);
         pNode.setMain(csNode);
+        
+        assignNode.indentedToString(0);
+        
        
         
               
@@ -71,7 +82,8 @@ public class SyntaxTreeNodeTest {
                           "|-- --- VariableNode: yen\n" +
                           "|-- --- VariableNode: bitcoin\n" +
                           "|-- SubProgramDeclarationsNode: \n" +
-                          "|-- CompoundStatementNode: \n";
+                          "|-- CompoundStatementNode: \n" +
+                          "|-- --- AssignmentNode: \n";
         
         String actual = pNode.indentedToString(0);
         System.out.println(actual);
