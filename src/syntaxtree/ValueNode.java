@@ -27,7 +27,11 @@ public class ValueNode extends ExpressionNode{
     public String toString() {
         return( attribute);
     }
-    
+    /**
+     * Adds a ValueNode to the syntax tree string
+     * @param level The level of the syntax tree
+     * @return A string representation of the syntax tree
+     */
      @Override
     public String indentedToString( int level) {
         String answer = super.indentedToString(level);

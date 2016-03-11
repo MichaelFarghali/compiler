@@ -3,7 +3,6 @@ package syntaxtree;
 
 /**
  * Represents a variable in syntax tree
- * @author Michael Farghali
  */
 public class VariableNode extends ExpressionNode{
     
@@ -23,11 +22,19 @@ public class VariableNode extends ExpressionNode{
      */
     public String getName() { return( this.name);}
     
+    /**
+     * Gets the name of the VariableNode
+     * @return The name of the VariableNode
+     */
     @Override
     public String toString() {
         return(name);
     }
-    
+    /**
+     * Adds a VariableNode to the syntax tree string
+     * @param level The level of the syntax tree
+     * @return A string representation of the syntax tree
+     */
      @Override
     public String indentedToString( int level) {
         String answer = super.indentedToString(level);

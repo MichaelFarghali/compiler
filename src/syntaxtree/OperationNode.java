@@ -25,14 +25,36 @@ public class OperationNode extends ExpressionNode {
     }
     
     
-    // Getters
+    /**
+     * Gets the left hand side of an operation
+     * @return The left hand side of an operation
+     */
     public ExpressionNode getLeft() { return( this.left);}
+    /**
+     * Gets the right hand side of an operation
+     * @return The right hand side of an operation
+     */
     public ExpressionNode getRight() { return( this.right);}
+    /**
+     * Gets the kind of operation to be performed
+     * @return The operation to be performed of type TokenType
+     */
     public TokenType getOperation() { return( this.operation);}
     
-    // Setters
+    /**
+     * Sets the left hand side of an expression
+     * @param node Either a ValueNode or VariableNode
+     */
     public void setLeft( ExpressionNode node) { this.left = node;}
+    /**
+     * Sets the right hand side of an expression
+     * @param node Either a ValueNode or VariableNode
+     */
     public void setRight( ExpressionNode node) { this.right = node;}
+    /**
+     * Sets the type of operation to be performed
+     * @param op A TokenType of the kind of operation to be performed
+     */
     public void setOperation( TokenType op) { this.operation = op;}
     
         
@@ -44,7 +66,11 @@ public class OperationNode extends ExpressionNode {
     public String toString() {
         return operation.toString();
     }
-    
+  /**
+     * Adds an operation to the syntax tree string
+     * @param level The level of the syntax tree
+     * @return A string representation of the syntax tree
+     */
     @Override
     public String indentedToString( int level) {
         String answer = super.indentedToString(level);

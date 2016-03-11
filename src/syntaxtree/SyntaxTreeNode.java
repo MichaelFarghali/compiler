@@ -2,7 +2,7 @@
 package syntaxtree;
 
 /**
- *
+ * An abstract class that builds the syntax tree
  * @author Michael Farghali
  */
 public abstract class SyntaxTreeNode {

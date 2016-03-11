@@ -20,7 +20,12 @@ public class DeclarationsNode extends SyntaxTreeNode{
     public void addVars(VariableNode var){
         vars.add(var);
     }    
-        
+      
+    /**
+     * Adds one or more VariableNodes to the syntax tree string
+     * @param level The level of the syntax tree
+     * @return A string representation of the syntax tree
+     */
      @Override
     public String indentedToString( int level) {
         String answer = super.indentedToString(level);

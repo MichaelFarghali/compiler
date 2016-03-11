@@ -2,7 +2,7 @@
 package syntaxtree;
 
 /**
- * Represents an AssignmentNode (left value and expression)
+ * Represents an assignment (left value and expression)
  * @author Michael Farghali
  */
 public class AssignmentStatementNode extends StatementNode{
@@ -14,15 +14,26 @@ public class AssignmentStatementNode extends StatementNode{
     public AssignmentStatementNode(){
         
     }
-    // Set the value of left variable node
+    /**
+     * The setLvalue function sets the the VariableNode on left hand side
+     * @param lvalue The variable on the left-handed side of an 
+     * assignment
+     */
     public void setLvalue(VariableNode lvalue) {
         this.lvalue = lvalue;
     }
-    // Set the expression node
+    /**
+     * Sets the expression to either a value or an operation of type TokenType
+     * @param expression Either an OperationNode or a ValueNode
+     */
     public void setExpression(ExpressionNode expression) {
         this.expression = expression;
     }
-    
+    /**
+     * Adds an AssignmentNode to the syntax tree string
+     * @param level The level of the syntax tree
+     * @return A string representation of the syntax tree
+     */
     @Override
     public String indentedToString( int level) {
         String answer = super.indentedToString(level);

@@ -1,13 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package syntaxtree;
 
 /**
- *
- * @author user
+ * An empty node for now. Will eventually represent functions and procedures in 
+ * the syntax tree
+ * @author Michael Farghali
  */
 public class SubProgramNode {
     

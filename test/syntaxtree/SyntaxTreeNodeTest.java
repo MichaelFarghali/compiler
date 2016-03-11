@@ -37,7 +37,9 @@ public class SyntaxTreeNodeTest {
 
     /**
      * Test of indentedToString method, of class SyntaxTreeNode.
-     * Tests that a correct syntax tree is created by manually creating one
+     * Tests that a correct syntax tree is created by manually creating the 
+     * expected string and then creating each class node and adding them to the 
+     * syntax tree for comparison against the actual string.
      */
     @Test
     public void testIndentedToString() {
@@ -52,13 +54,13 @@ public class SyntaxTreeNodeTest {
         OperationNode mul = new OperationNode(TokenType.MULTIPLY);
         OperationNode div = new OperationNode(TokenType.DIVIDE);
         
+        // Set left and righ hand sides of multiply and divide operations
         div.setLeft(dollar);
-        div.setRight(new ValueNode("400"));
-        
+        div.setRight(new ValueNode("400"));        
         mul.setLeft(dollar);
         mul.setRight(new ValueNode("102"));
         
-        //Create instance of DeclarationsNode and add 3 VariableNodes to it
+        //Create instance of DeclarationsNode and add the 3 VariableNodes to it
         DeclarationsNode decsNode = new DeclarationsNode();        
         decsNode.addVars(dollar);
         decsNode.addVars(yen);
