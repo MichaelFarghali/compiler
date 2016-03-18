@@ -23,6 +23,7 @@ public class Scanner {
     private final int SYMBOL_COMPLETE = 102;
     private final int SHORT_SYMBOL_COMPLETE = 103;
     private final int INTEGER_COMPLETE = 104;
+    private final int EOF = 105;
     private final int IN_GREATER_THAN_EQUALS = 2;
     private final int IN_LESS_THAN_EQUALS = 3; // Also handles the <> operator
     private final int IN_CURLY_BRACKETS = 4;
@@ -30,7 +31,7 @@ public class Scanner {
     private final int IN_DIGIT = 6;
     private final int IN_DECIMAL = 7;
     private final int IN_SCI_NOTATION = 8;
-
+   
     //// Instance Variables
     private TokenType type;
     private String lexeme;
@@ -119,12 +120,12 @@ public class Scanner {
             switch (stateNumber) {
                 // Begin reading in the file
                 case START:
-                    // Exit if file is empty
+                    // Go to End of File state
                     if (currentCharacter == -1) {
-                        this.lexeme = "";
+                        this.lexeme = null;
                         this.type = null;
                         System.out.println("Scanner: End of file reached.");
-                        System.exit(0);    
+                        stateNumber = EOF;   
                     } 
                     // If a new line increment the line counter
                     else if (currentCharacter == '\n'){
@@ -359,6 +360,7 @@ public class Scanner {
 
             } // end switch 
         } // end while
+        
         // Get the completed string and check the final state number to 
         // get the correct Token identifier
         this.lexeme = currentLexeme;
@@ -388,6 +390,11 @@ public class Scanner {
         else if(stateNumber == INTEGER_COMPLETE){
             this.type = TokenType.NUM;
             return (true);
+        }
+        else if(stateNumber == EOF){
+            this.lexeme = null;
+            this.type = null;
+            return false;  // No more tokens available so return false
         }
 
         return (false);

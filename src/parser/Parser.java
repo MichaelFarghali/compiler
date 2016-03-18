@@ -5,7 +5,7 @@ import scanner.TokenType;
 import java.io.File;
 import java.util.Stack;
 import symbol.table.SymbolTable;
-
+import syntaxtree.*;
 /**
  * The Parser class will eventually process a source file and create a parse
  * tree or reject the source as invalid using top down recursive descent
@@ -58,7 +58,9 @@ public class Parser {
                 System.out.println("No Token Available");
                 String lexeme = scanner.getLexeme(); //Check if string is null
                 if (lexeme == null) {
-                    System.out.println("End of file");
+                    System.out.println("Parser: End of file");
+                    // If String is null set currentToken to null
+                    currentToken = null; 
                 } else {
                     System.out.println("Scanner barfed on " + lexeme);
                 }
@@ -74,24 +76,33 @@ public class Parser {
      * Implements program -&gt; program id ; declarations subprogram_declarations
      *                       compound_statement .
      * The program function also checks that there is no data after the period
+     * @return 
      */
-    public void program() {
+    public ProgramNode program() {
         match(TokenType.PROGRAM);
         //add program name to symbol table
-        st.addProgramName(scanner.getLexeme());
+        String pName = scanner.getLexeme();
+        st.addProgramName(pName);
+        ProgramNode pNode = new ProgramNode(pName);
         match(TokenType.ID);
         match(TokenType.SEMICOLON);
         declarations();
         subprogram_declarations();
         compound_statement();
         //Print out the symbol table
-        System.out.println(st.myToString());
+        
+//        System.out.println("ProgramNode: " + pNode.indentedToString(0));
         match(TokenType.PERIOD);
+        System.out.println(st.myToString());
+        
         //If there's still data in the file stream go to error
+    System.out.println("Program: " + currentToken);
         if( currentToken != null){
             System.out.println("File not empty");
-            error();
-        }        
+            error();        
+        }
+        
+        return pNode;
     }//end program
     
     /**
