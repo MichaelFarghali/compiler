@@ -83,20 +83,26 @@ public class Parser {
         //add program name to symbol table
         String pName = scanner.getLexeme();
         st.addProgramName(pName);
+        System.out.println(pName);
+        
         ProgramNode pNode = new ProgramNode(pName);
+      
+      
+        
         match(TokenType.ID);
         match(TokenType.SEMICOLON);
-        declarations();
-        subprogram_declarations();
-        compound_statement();
-        //Print out the symbol table
         
-//        System.out.println("ProgramNode: " + pNode.indentedToString(0));
+        pNode.setVariables( declarations() );
+        
+        pNode.setFunctions( subprogram_declarations() );
+        
+        pNode.setMain( compound_statement() );
+       
+        
         match(TokenType.PERIOD);
         System.out.println(st.myToString());
         
         //If there's still data in the file stream go to error
-    System.out.println("Program: " + currentToken);
         if( currentToken != null){
             System.out.println("File not empty");
             error();        
@@ -125,8 +131,9 @@ public class Parser {
      * Implements declarations -&gt; var identifier_list : type ; declarations |
      *                            lambda
      */
-    public void declarations() {
+    public DeclarationsNode declarations() {
         //If there is a variable declaration process it. Else do nothing
+        DeclarationsNode decNode = new DeclarationsNode();
         if (currentToken == TokenType.VAR) {
             match(TokenType.VAR);
             identifier_list();
@@ -135,6 +142,7 @@ public class Parser {
             match(TokenType.SEMICOLON);
             declarations();
         }
+        return decNode;
     }//end declarations
 
     /**
@@ -175,7 +183,9 @@ public class Parser {
      * Implements subprogram_declarations -&gt; subprogram_declaration;
      *                                       subprogram_declarations | lambda
      */
-    public void subprogram_declarations() {
+    public SubProgramDeclarationsNode subprogram_declarations() {
+        
+        SubProgramDeclarationsNode subNode = new SubProgramDeclarationsNode();
             //If a function or procedure is declared go to subprogram_declaration
             if ( currentToken == TokenType.FUNCTION ||
                  currentToken == TokenType.PROCEDURE){
@@ -184,6 +194,7 @@ public class Parser {
                 match(TokenType.SEMICOLON);
                 subprogram_declarations();
             }           
+            return subNode;
     }//end subprogram_declaration
     
     /**
@@ -253,10 +264,14 @@ public class Parser {
     /**
      * Implements compound_statement -&gt; begin optional_statements end
      */
-    public void compound_statement() {
+    public CompoundStatementNode compound_statement() {
+        
+        CompoundStatementNode csNode = new CompoundStatementNode();
         match(TokenType.BEGIN);
         optional_statements();
         match(TokenType.END);
+        
+        return csNode;
     }//end compound_statement
 
     /**

@@ -1,5 +1,6 @@
 
 package parser;
+import syntaxtree.ProgramNode;
 
 /**
  * The ParseTest class checks that Parse class is working as expected 
@@ -10,9 +11,11 @@ public class ParseTest {
     public static void main(String args[])
     {
         
-        Parser parse = new Parser("completeTest.txt");  
+        Parser parse = new Parser("input.txt");  
+        ProgramNode tree;
         
-        parse.program();    
+        tree = parse.program();    
+        System.out.println(tree.indentedToString(0));
         
        
             
