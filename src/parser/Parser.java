@@ -4,6 +4,7 @@ import scanner.Scanner;
 import scanner.TokenType;
 import java.io.File;
 import java.util.Stack;
+import java.util.ArrayList;
 import symbol.table.SymbolTable;
 import syntaxtree.*;
 /**
@@ -45,8 +46,8 @@ public class Parser {
      * production rules
      */
     public void match(TokenType expectedToken) {
-        System.out.println("match " + expectedToken + " with current " + 
-                currentToken + ":" + scanner.getLexeme());
+        //System.out.println("match " + expectedToken + " with current " + 
+         //       currentToken + ":" + scanner.getLexeme());
         if (currentToken == expectedToken) {
             boolean scanResult = scanner.nextToken();
             // If there's a next token assigne to currentToken
@@ -76,28 +77,26 @@ public class Parser {
      * Implements program -&gt; program id ; declarations subprogram_declarations
      *                       compound_statement .
      * The program function also checks that there is no data after the period
-     * @return 
+     * @return The completed syntax tree processed by parser
      */
     public ProgramNode program() {
         match(TokenType.PROGRAM);
+        
         //add program name to symbol table
         String pName = scanner.getLexeme();
         st.addProgramName(pName);
-        System.out.println(pName);
-        
-        ProgramNode pNode = new ProgramNode(pName);
-      
-      
+               
+        //Create a new ProgramNode
+        ProgramNode pNode = new ProgramNode(pName);     
         
         match(TokenType.ID);
         match(TokenType.SEMICOLON);
-        
+        //Call declarations() and set syntax tree variables
         pNode.setVariables( declarations() );
-        
+        //Call subprogram_declarations and set syntax tree functions
         pNode.setFunctions( subprogram_declarations() );
-        
-        pNode.setMain( compound_statement() );
-       
+        //Call compound_statement and set syntax tree assignment statements
+        pNode.setMain( compound_statement() );       
         
         match(TokenType.PERIOD);
         System.out.println(st.myToString());
@@ -113,35 +112,63 @@ public class Parser {
     
     /**
      * Implements identifier_list -&gt; id | id, identifier_list
+     * @return An ArrayList of variable names of type String
      */
-    public void identifier_list() {
+    public ArrayList<String> identifier_list() {
+        String var;
+        ArrayList<String> variables = new ArrayList<>();
+        //Get the name of variable and add to symbol table
+        var = scanner.getLexeme();
+        st.addVarName(var);
+        //Add variable name to ArrayList
+        variables.add(var);
         
-        //Add ID to symbol table
-        st.addVarName(scanner.getLexeme());
         match(TokenType.ID);
-        // While there's still commas match IDs and add to symbol table
+       //While there's still commas match IDs and add to symbol table, ArrayList
         while (currentToken == TokenType.COMMA) {
             match(TokenType.COMMA);
-            st.addVarName(scanner.getLexeme());
+            var = scanner.getLexeme();
+            st.addVarName(var);            
+            variables.add(var);            
             match(TokenType.ID);            
         }
+        return variables;
     }//end identifier_list
 
     /**
      * Implements declarations -&gt; var identifier_list : type ; declarations |
      *                            lambda
+     * @return A DeclarationNode containing any declared variables
      */
     public DeclarationsNode declarations() {
-        //If there is a variable declaration process it. Else do nothing
+        
         DeclarationsNode decNode = new DeclarationsNode();
+        ArrayList<String> varList = new ArrayList<>();
+        ArrayList<VariableNode> moreVars= new ArrayList<>();
+        
+        //If there is a variable declaration process it. Else do nothing
         if (currentToken == TokenType.VAR) {
             match(TokenType.VAR);
-            identifier_list();
+            //Get arraylist of variable names (Strings)
+            varList = identifier_list();
+            //for every variable name add a new VariableNode to declarationsNode
+             for (String s: varList){
+                decNode.addVars(new VariableNode(s));     
+            }
+                        
             match(TokenType.COLON);
+//TODO Add variable type in DeclarationsNode 
             type();
             match(TokenType.SEMICOLON);
-            declarations();
-        }
+            //Call declarations() and get the next declarationNode if any
+            DeclarationsNode moreDecs = declarations();
+            //Get new VariableNode(s) and add to decNode
+            moreVars = moreDecs.getVars();
+            for (VariableNode v: moreVars){
+                decNode.addVars(v);
+            }                      
+        }        
+       
         return decNode;
     }//end declarations
 

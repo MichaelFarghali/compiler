@@ -20,7 +20,15 @@ public class DeclarationsNode extends SyntaxTreeNode{
     public void addVars(VariableNode var){
         vars.add(var);
     }    
-      
+    /**
+     * Returns the ArrayList of VariableNodes currently in DeclarationsNode
+     * @return An ArrayList of VariableNodes
+     */  
+    public ArrayList<VariableNode> getVars(){
+        
+        return vars;
+    }
+    
     /**
      * Adds one or more VariableNodes to the syntax tree string
      * @param level The level of the syntax tree
@@ -35,6 +43,5 @@ public class DeclarationsNode extends SyntaxTreeNode{
             answer += i.indentedToString(level +1);
         }
         return answer;
-    }
-    
+    }    
 }
