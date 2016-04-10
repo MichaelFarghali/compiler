@@ -85,7 +85,7 @@ public class SymbolTable {
      * @param name The name of the variable id
      * @return boolean True if add successful, False otherwise
      */
-    public boolean addVarName(String name){
+    public boolean addVarName(String name, String type){
         //Check if variable name alredy exists, if so return false
         if(this.table.containsKey(name))
             return false;
@@ -93,6 +93,7 @@ public class SymbolTable {
         //name and data to Hashtable
         DataStruct data = new DataStruct();
         data.lexeme = name;
+        data.type = type;
         data.kind = IdKind.VAR;
         this.table.put(data.lexeme, data);
         
@@ -105,7 +106,7 @@ public class SymbolTable {
      * @param name The name of the Array id 
      * @return boolean True if add successful, False otherwise
      */
-    public boolean addArrayName(String name){
+    public boolean addArrayName(String name, String type){
         //Check if array name alredy exists, if so return false
         if(table.containsKey(name))
             return false;
@@ -113,6 +114,7 @@ public class SymbolTable {
         //name and data to Hashtable
         DataStruct data = new DataStruct();
         data.lexeme = name;
+        data.type = type;
         data.kind = IdKind.ARRAY;
         table.put(data.lexeme, data);
         
@@ -202,13 +204,13 @@ public class SymbolTable {
    
     public String myToString()
     {
-        String ans = String.format("%-20s %-20s %-15s %-15s %15s", "Name", 
-                "Kind", "Array", "Start Index", "End Index") + "\n";
+        String ans = String.format("%-20s %-20s %-15s %-15s %-15s %15s", "Name", 
+                "Kind", "Type", "Array", "Start Index", "End Index") + "\n";
         Set<String> keys = table.keySet();
         for (String key: keys)
         {
             ans += String.format("%-20s %-20s %-15s %-15s %-15s", 
-                    key, table.get(key).kind, table.get(key).array, 
+                    key, table.get(key).kind, table.get(key).type, table.get(key).array, 
                     table.get(key).startIndex, table.get(key).endIndex) + "\n";
             
         }
@@ -223,6 +225,7 @@ public class SymbolTable {
     private class DataStruct {
         
         private String lexeme;
+        private String type;
         private IdKind kind;
         private boolean array;
         private int startIndex;

@@ -24,8 +24,7 @@ public class DeclarationsNode extends SyntaxTreeNode{
      * Returns the ArrayList of VariableNodes currently in DeclarationsNode
      * @return An ArrayList of VariableNodes
      */  
-    public ArrayList<VariableNode> getVars(){
-        
+    public ArrayList<VariableNode> getVars(){        
         return vars;
     }
     

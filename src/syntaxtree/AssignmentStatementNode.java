@@ -29,6 +29,11 @@ public class AssignmentStatementNode extends StatementNode{
     public void setExpression(ExpressionNode expression) {
         this.expression = expression;
     }
+    
+        @Override
+    public String toString() {
+        return expression.toString();
+    }
     /**
      * Adds an AssignmentNode to the syntax tree string
      * @param level The level of the syntax tree

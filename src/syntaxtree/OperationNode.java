@@ -24,6 +24,11 @@ public class OperationNode extends ExpressionNode {
         this.operation = op;
     }
     
+    public OperationNode()
+    {
+        
+    }
+    
     
     /**
      * Gets the left hand side of an operation

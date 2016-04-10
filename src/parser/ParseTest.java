@@ -10,8 +10,8 @@ public class ParseTest {
     
     public static void main(String args[])
     {
-        
-        Parser parse = new Parser("input.txt");  
+        String filename = args[0];
+        Parser parse = new Parser(filename);  
         ProgramNode tree;
         
         tree = parse.program();    

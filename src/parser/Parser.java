@@ -47,8 +47,8 @@ public class Parser {
      * production rules
      */
     public void match(TokenType expectedToken) {
-        //System.out.println("match " + expectedToken + " with current " + 
-         //       currentToken + ":" + scanner.getLexeme());
+        System.out.println("match " + expectedToken + " with current " + 
+               currentToken + ":" + scanner.getLexeme());
         if (currentToken == expectedToken) {
             boolean scanResult = scanner.nextToken();
             // If there's a next token assigne to currentToken
@@ -120,7 +120,7 @@ public class Parser {
         ArrayList<String> variables = new ArrayList<>();
         //Get the name of variable and add to symbol table
         var = scanner.getLexeme();
-        st.addVarName(var);
+        //st.addVarName(var);
         //Add variable name to ArrayList
         variables.add(var);
         
@@ -129,7 +129,7 @@ public class Parser {
         while (currentToken == TokenType.COMMA) {
             match(TokenType.COMMA);
             var = scanner.getLexeme();
-            st.addVarName(var);            
+            //st.addVarName(var);            
             variables.add(var);            
             match(TokenType.ID);            
         }
@@ -146,6 +146,7 @@ public class Parser {
         DeclarationsNode decNode = new DeclarationsNode();
         ArrayList<String> varList = new ArrayList<>();
         ArrayList<VariableNode> moreVars= new ArrayList<>();
+        TokenType token;
         
         //If there is a variable declaration process it. Else do nothing
         if (currentToken == TokenType.VAR) {
@@ -153,13 +154,15 @@ public class Parser {
             //Get arraylist of variable names (Strings)
             varList = identifier_list();
             //for every variable name add a new VariableNode to declarationsNode
-             for (String s: varList){
-                decNode.addVars(new VariableNode(s));     
-            }
+             
                         
             match(TokenType.COLON);
 //TODO Add variable type in DeclarationsNode 
-            type();
+            token = type();
+            for (String s: varList){
+                decNode.addVars(new VariableNode(s));  
+                st.addVarName(s, token.toString());
+            }
             match(TokenType.SEMICOLON);
             //Call declarations() and get the next declarationNode if any
             DeclarationsNode moreDecs = declarations();
@@ -300,9 +303,14 @@ public class Parser {
      */
     public CompoundStatementNode compound_statement() {
         System.out.println("In compound statement");
+        ArrayList<StatementNode> statements = new ArrayList<>();
         CompoundStatementNode csNode = new CompoundStatementNode();
         match(TokenType.BEGIN);
-        optional_statements();
+        statements = optional_statements();
+        for (StatementNode s: statements){
+            csNode.addStatements(s);
+//            System.out.println(s.toString());
+        }
         match(TokenType.END);
         
         return csNode;
@@ -312,8 +320,9 @@ public class Parser {
      * Implements optional_statements -&gt; statement_list | lambda
      * lambda.
      */
-    public void optional_statements() {
+    public ArrayList<StatementNode> optional_statements() {
         System.out.println("In optional statements");
+        ArrayList<StatementNode> list = new ArrayList<>();
         //If currentToken is a variable id, if, while, read, or write statement
         //go to statement_list
         if ( currentToken == TokenType.ID ||
@@ -322,21 +331,29 @@ public class Parser {
              currentToken == TokenType.READ ||
              currentToken == TokenType.WRITE){
             
-            statement_list();
+            list = statement_list();
         }
+        return list;
     }//end optional_statements
     
     /**
      * Implements statement_list -&gt; statement | statement ; statement_list
      */
-    public void statement_list(){
+    public ArrayList<StatementNode> statement_list(){
         System.out.println("In statement_list");
-        statement();
+        ArrayList<StatementNode> state = new ArrayList<>();
+        ArrayList<StatementNode> statements = new ArrayList<>();
+        statements.add( statement() );
         //If there's a semicolon eat token and get next statement
         while (currentToken == TokenType.SEMICOLON){
             match(TokenType.SEMICOLON);
-            statement_list();
+            state = statement_list();
+            for(StatementNode s: state){
+                statements.add(s);
+            }
+            
         }
+        return statements;
     }//end statement_list
     
     /**
@@ -356,7 +373,7 @@ public class Parser {
             if (st.isVarName( scanner.getLexeme()) ){
                 statement.setLvalue( variable() ); // Process variable
                 match(TokenType.ASSIGN);
-                expression();
+                statement.setExpression( expression() );
             } // Process procedure
             else if(st.isProcName(scanner.getLexeme())){
                 procedure_statement();
@@ -424,9 +441,11 @@ public class Parser {
      * Implements expression -&gt; simple_expression | 
      *                          simple_expression relop simple_expression
      */
-    public void expression(){
+    public ExpressionNode expression(){
         System.out.println("In expression");
-        simple_expression(); 
+        ExpressionNode ex; 
+        ex = simple_expression(); 
+       
         //Check for relop's <, >, <=, >=, <>, =. If found match and get next
         //simple expression
         if ( currentToken == TokenType.EQUALS){
@@ -452,26 +471,38 @@ public class Parser {
         else if ( currentToken == TokenType.GREATER_THAN){
             match(TokenType.GREATER_THAN);
             simple_expression();
-        }                   
+        }              
+        return ex;
     }//end expression
     
     /**
      * Implements simple_expression -&gt; term simple_part | lambda
      */
-    public void simple_expression(){
+    public ExpressionNode simple_expression(){
         System.out.println("In simple_expression");
-        //If the number is signed go to sign then call term, simple_part
-        if( currentToken == TokenType.PLUS ||
+        ExpressionNode ex;
+        OperationNode op;
+        
+         if( currentToken == TokenType.PLUS ||
             currentToken == TokenType.MINUS){
             
             sign();
-            term();
+            ex = term();
             simple_part();
         }
         else {
-            term();
-            simple_part();
+            ex = term();
+            if ( currentToken == TokenType.PLUS ||
+                 currentToken == TokenType.MINUS){
+                
+                OperationNode op1 = simple_part();
+                op1.setLeft(ex);
+                return op1;
+            }
+            
         }        
+    
+    return ex;
     }//end simple_expression
     
     /**
@@ -480,53 +511,87 @@ public class Parser {
      */
     public OperationNode simple_part(){
         System.out.println("In simple_part");
-        OperationNode op = new OperationNode(currentToken);
+        OperationNode op;
         //Match one of the addops +, -, OR 
         if (currentToken == TokenType.PLUS) {
+            OperationNode op1 = new OperationNode(currentToken);
             match(TokenType.PLUS);
-            term();
-            simple_part();
+            op1.setRight( term() );            
+            return op1;
         }
         else if (currentToken == TokenType.MINUS) {
+            OperationNode op2 = new OperationNode(currentToken);
             match(TokenType.MINUS);
-            term();
-            simple_part();
+            op2.setLeft( term() );
+            op2.setRight( simple_part() );
+            return op2;
         }
         else if (currentToken == TokenType.OR) {
+            OperationNode op3 = new OperationNode(currentToken);
             match(TokenType.OR);
-            term();
-            simple_part();
+            op3.setLeft( term() );
+            op3.setRight( simple_part() );
+            return op3;
         }
-        return op;
+
+        return null;
     }//end simple_part
     
     /**
      * Implements term -&gt; factor term_part
      */
-    public void term(){
+    public ExpressionNode term(){
+        ExpressionNode ex;
+        OperationNode op;
         System.out.println("In term");
-        factor();
-        term_part();
+        
+        ex = factor();
+        if( currentToken == TokenType.MULTIPLY ||
+               currentToken == TokenType.DIVIDE ||
+               currentToken == TokenType.DIV ||
+               currentToken == TokenType.MOD ||
+               currentToken == TokenType.AND ){
+           
+            op = new OperationNode(currentToken);
+            op.setLeft(ex);
+            op.setRight(term_part());
+            return op;
+        }
+        
+        return ex;
     }//end term
     
     /**
      * Implements term_part -&gt; mulop factor term_part | lambda
      */
-    public void term_part(){
+    public ExpressionNode term_part(){
         System.out.println("In term_part");
-        ExpressionNode ex;
+        ExpressionNode ex = null;
+        OperationNode op;
         //While there is a mulop ( *,/,div, mod, and) go to mulop then factor
         //and term_part
-        while( currentToken == TokenType.MULTIPLY ||
+        if( currentToken == TokenType.MULTIPLY ||
                currentToken == TokenType.DIVIDE ||
                currentToken == TokenType.DIV ||
                currentToken == TokenType.MOD ||
                currentToken == TokenType.AND ) {
             
-            OperationNode op = mulop();
-            ex = factor();
-            term_part();
-        }          
+            TokenType token = TokenType.MULTIPLY;
+
+            op = new OperationNode( mulop() );
+            op.setRight( factor() );
+             if( currentToken == TokenType.MULTIPLY ||
+               currentToken == TokenType.DIVIDE ||
+               currentToken == TokenType.DIV ||
+               currentToken == TokenType.MOD ||
+               currentToken == TokenType.AND ) {
+                
+                 op.setRight(term_part());
+                
+             }
+             return op;
+        }     
+        return ex;
     }//end term_part
     
     /**
@@ -535,7 +600,6 @@ public class Parser {
      */
     public ExpressionNode factor(){
         System.out.println("In factor");
-        
         //If ID or ID[expression] or ID(expression_list) then match accordingly
         if( currentToken == TokenType.ID){
             VariableNode var = new VariableNode( scanner.getLexeme() );
@@ -604,26 +668,31 @@ public class Parser {
      * ( *, /, mod, div, and )
      * @return An OperationNode representing *, /, mod, AND
      */
-    public OperationNode mulop(){
+    public TokenType mulop(){
         System.out.println("In mulop");
+        TokenType token = null; 
         //Create the operation node to be returned
-        OperationNode op = new OperationNode(currentToken);
         if ( currentToken == TokenType.MULTIPLY) {
+            token = currentToken;
             match(TokenType.MULTIPLY);
         }
         else if (currentToken == TokenType.DIVIDE) {
+            token = currentToken;
             match(TokenType.DIVIDE);
         }
         else if (currentToken == TokenType.MOD) {
+            token = currentToken;
             match(TokenType.MOD);
         }
         else if (currentToken == TokenType.DIV) {
+            token = currentToken;
             match(TokenType.DIV);
         }
         else if (currentToken == TokenType.AND) {
+            token = currentToken;
             match(TokenType.AND);
         }
-        return op;
+        return token;
     }//end mulop
 
     /**
