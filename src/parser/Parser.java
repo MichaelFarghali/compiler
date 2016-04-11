@@ -498,8 +498,7 @@ public class Parser {
                 OperationNode op1 = simple_part();
                 op1.setLeft(ex);
                 return op1;
-            }
-            
+            }            
         }        
     
     return ex;
@@ -546,16 +545,23 @@ public class Parser {
         System.out.println("In term");
         
         ex = factor();
-        if( currentToken == TokenType.MULTIPLY ||
+        while( currentToken == TokenType.MULTIPLY ||
                currentToken == TokenType.DIVIDE ||
                currentToken == TokenType.DIV ||
                currentToken == TokenType.MOD ||
                currentToken == TokenType.AND ){
            
-            op = new OperationNode(currentToken);
-            op.setLeft(ex);
-            op.setRight(term_part());
-            return op;
+            ExpressionNode left = ex;
+            OperationNode operation = mulop();
+            ExpressionNode right = factor();
+            operation.setLeft(left);
+            operation.setRight(right);
+            
+//            op = term_part();
+//            op.setLeft(left);
+//            op.setRight(term_part());
+            
+            return operation;
         }
         
         return ex;
@@ -564,10 +570,10 @@ public class Parser {
     /**
      * Implements term_part -&gt; mulop factor term_part | lambda
      */
-    public ExpressionNode term_part(){
+    public OperationNode term_part(){
         System.out.println("In term_part");
         ExpressionNode ex = null;
-        OperationNode op;
+        OperationNode op = null;
         //While there is a mulop ( *,/,div, mod, and) go to mulop then factor
         //and term_part
         if( currentToken == TokenType.MULTIPLY ||
@@ -576,22 +582,13 @@ public class Parser {
                currentToken == TokenType.MOD ||
                currentToken == TokenType.AND ) {
             
-            TokenType token = TokenType.MULTIPLY;
 
-            op = new OperationNode( mulop() );
+            op = mulop();
             op.setRight( factor() );
-             if( currentToken == TokenType.MULTIPLY ||
-               currentToken == TokenType.DIVIDE ||
-               currentToken == TokenType.DIV ||
-               currentToken == TokenType.MOD ||
-               currentToken == TokenType.AND ) {
-                
-                 op.setRight(term_part());
-                
-             }
-             return op;
+       
+            return op;
         }     
-        return ex;
+        return op;
     }//end term_part
     
     /**
@@ -624,9 +621,9 @@ public class Parser {
         }//If (expression) match parenthesis and go to expression
         else if( currentToken == TokenType.L_PARENTHESES){
             match(TokenType.L_PARENTHESES);
-            expression();
+            ExpressionNode exp = expression();
             match(TokenType.R_PARENTHESES);
-            return null;
+            return exp;
         }//if not match and make recursive call to factor
         else if( currentToken == TokenType.NOT){
             match(TokenType.NOT);
@@ -668,31 +665,26 @@ public class Parser {
      * ( *, /, mod, div, and )
      * @return An OperationNode representing *, /, mod, AND
      */
-    public TokenType mulop(){
+    public OperationNode mulop(){
         System.out.println("In mulop");
-        TokenType token = null; 
+        OperationNode op = new OperationNode(currentToken);
         //Create the operation node to be returned
         if ( currentToken == TokenType.MULTIPLY) {
-            token = currentToken;
             match(TokenType.MULTIPLY);
         }
         else if (currentToken == TokenType.DIVIDE) {
-            token = currentToken;
             match(TokenType.DIVIDE);
         }
         else if (currentToken == TokenType.MOD) {
-            token = currentToken;
             match(TokenType.MOD);
         }
         else if (currentToken == TokenType.DIV) {
-            token = currentToken;
             match(TokenType.DIV);
         }
         else if (currentToken == TokenType.AND) {
-            token = currentToken;
             match(TokenType.AND);
         }
-        return token;
+        return op;
     }//end mulop
 
     /**
