@@ -443,8 +443,8 @@ public class Parser {
      */
     public ExpressionNode expression(){
         System.out.println("In expression");
-        ExpressionNode ex; 
-        ex = simple_expression(); 
+        ExpressionNode exp; 
+        exp = simple_expression(); 
        
         //Check for relop's <, >, <=, >=, <>, =. If found match and get next
         //simple expression
@@ -472,7 +472,7 @@ public class Parser {
             match(TokenType.GREATER_THAN);
             simple_expression();
         }              
-        return ex;
+        return exp;
     }//end expression
     
     /**
@@ -480,116 +480,125 @@ public class Parser {
      */
     public ExpressionNode simple_expression(){
         System.out.println("In simple_expression");
-        ExpressionNode ex;
-        OperationNode op;
+        ExpressionNode exp;
         
          if( currentToken == TokenType.PLUS ||
-            currentToken == TokenType.MINUS){
+             currentToken == TokenType.MINUS){
             
             sign();
-            ex = term();
-            simple_part();
+            exp = term();
+            while ( currentToken == TokenType.PLUS ||
+                    currentToken == TokenType.MINUS ||
+                    currentToken == TokenType.OR){
+                
+                ExpressionNode left = exp;
+                OperationNode op = addop();
+                ExpressionNode right = term();
+                op.setLeft(left);
+                op.setRight(right);
+                exp = op;
+            } 
+            
         }
         else {
-            ex = term();
-            if ( currentToken == TokenType.PLUS ||
-                 currentToken == TokenType.MINUS){
+            exp = term();
+            while ( currentToken == TokenType.PLUS ||
+                    currentToken == TokenType.MINUS ||
+                    currentToken == TokenType.OR){
                 
-                OperationNode op1 = simple_part();
-                op1.setLeft(ex);
-                return op1;
+                ExpressionNode left = exp;
+                OperationNode op = addop();
+                ExpressionNode right = term();
+                op.setLeft(left);
+                op.setRight(right);
+                exp = op;
             }            
         }        
     
-    return ex;
+    return exp;
     }//end simple_expression
     
-    /**
-     * Implements simple_part -&gt; addop term simple_part | lambda
-     * @return A +, -, OR, OperationNode
+     /**
+     * The addop function matches the currentToken to one of the addops
+     * ( +, -, OR ) and then creates an OperationNode with that
+     * operation
+     * @return An OperationNode representing +, -, OR
      */
-    public OperationNode simple_part(){
-        System.out.println("In simple_part");
-        OperationNode op;
+    public OperationNode addop(){
+        System.out.println("In addop");
+        OperationNode op = new OperationNode(currentToken);
         //Match one of the addops +, -, OR 
         if (currentToken == TokenType.PLUS) {
-            OperationNode op1 = new OperationNode(currentToken);
             match(TokenType.PLUS);
-            op1.setRight( term() );            
-            return op1;
         }
         else if (currentToken == TokenType.MINUS) {
-            OperationNode op2 = new OperationNode(currentToken);
             match(TokenType.MINUS);
-            op2.setLeft( term() );
-            op2.setRight( simple_part() );
-            return op2;
         }
         else if (currentToken == TokenType.OR) {
-            OperationNode op3 = new OperationNode(currentToken);
             match(TokenType.OR);
-            op3.setLeft( term() );
-            op3.setRight( simple_part() );
-            return op3;
         }
-
-        return null;
+        else {
+            System.out.println("Error in addop "+currentToken+"not expected.");
+            error();
+        }
+        return op;
     }//end simple_part
     
     /**
-     * Implements term -&gt; factor term_part
+     * Implements term -&gt; factor | factor mulop factor
      */
     public ExpressionNode term(){
-        ExpressionNode ex;
-        OperationNode op;
         System.out.println("In term");
         
-        ex = factor();
+        ExpressionNode exp = factor();
+        //While there is another mulop mulitplication create new OperationNode
         while( currentToken == TokenType.MULTIPLY ||
                currentToken == TokenType.DIVIDE ||
                currentToken == TokenType.DIV ||
                currentToken == TokenType.MOD ||
                currentToken == TokenType.AND ){
            
-            ExpressionNode left = ex;
-            OperationNode operation = mulop();
+            ExpressionNode left = exp;
+            OperationNode op = mulop();
             ExpressionNode right = factor();
-            operation.setLeft(left);
-            operation.setRight(right);
-            
-//            op = term_part();
-//            op.setLeft(left);
-//            op.setRight(term_part());
-            
-            return operation;
+            op.setLeft(left);
+            op.setRight(right);            
+            exp = op;
         }
-        
-        return ex;
+        //If no operation return the Value or VariableNode
+        return exp;
     }//end term
     
-    /**
-     * Implements term_part -&gt; mulop factor term_part | lambda
+     /**
+     * The mulop function matches the currentToken to one of the mulop's
+     * ( *, /, mod, div, and ) and then creates an OperationNode with that
+     * operation
+     * @return An OperationNode representing *, /, mod, DIV, AND
      */
-    public OperationNode term_part(){
-        System.out.println("In term_part");
-        ExpressionNode ex = null;
-        OperationNode op = null;
-        //While there is a mulop ( *,/,div, mod, and) go to mulop then factor
-        //and term_part
-        if( currentToken == TokenType.MULTIPLY ||
-               currentToken == TokenType.DIVIDE ||
-               currentToken == TokenType.DIV ||
-               currentToken == TokenType.MOD ||
-               currentToken == TokenType.AND ) {
-            
-
-            op = mulop();
-            op.setRight( factor() );
-       
-            return op;
-        }     
+    public OperationNode mulop(){
+        System.out.println("In mulop");
+        OperationNode op = new OperationNode(currentToken);
+        //Create the operation node to be returned
+        if ( currentToken == TokenType.MULTIPLY) {
+            match(TokenType.MULTIPLY);
+        }
+        else if (currentToken == TokenType.DIVIDE) {
+            match(TokenType.DIVIDE);
+        }
+        else if (currentToken == TokenType.MOD) {
+            match(TokenType.MOD);
+        }
+        else if (currentToken == TokenType.DIV) {
+            match(TokenType.DIV);
+        }
+        else if (currentToken == TokenType.AND) {
+            match(TokenType.AND);
+        }
+        else{
+            System.out.println("Error in mulop " +currentToken+" not expected.");
+        }
         return op;
-    }//end term_part
+    }//end mulop   
     
     /**
      * Implements factor -&gt; id | id[expression] | id(expression_list) | num |
@@ -660,33 +669,6 @@ public class Parser {
             match(TokenType.MINUS);
     }//end sign
     
-    /**
-     * The mulop function matches the currentToken to one of the mulop's
-     * ( *, /, mod, div, and )
-     * @return An OperationNode representing *, /, mod, AND
-     */
-    public OperationNode mulop(){
-        System.out.println("In mulop");
-        OperationNode op = new OperationNode(currentToken);
-        //Create the operation node to be returned
-        if ( currentToken == TokenType.MULTIPLY) {
-            match(TokenType.MULTIPLY);
-        }
-        else if (currentToken == TokenType.DIVIDE) {
-            match(TokenType.DIVIDE);
-        }
-        else if (currentToken == TokenType.MOD) {
-            match(TokenType.MOD);
-        }
-        else if (currentToken == TokenType.DIV) {
-            match(TokenType.DIV);
-        }
-        else if (currentToken == TokenType.AND) {
-            match(TokenType.AND);
-        }
-        return op;
-    }//end mulop
-
     /**
      * The error function displays the line of code where an error was found 
      * and the string that is related to the error. It then exits the program
