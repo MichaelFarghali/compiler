@@ -21,7 +21,6 @@ public class Parser {
     private TokenType currentToken;  // The TokenType variable 
     private SymbolTable st; //The symboltable
     private Stack stack = new Stack();
-    
     /**
      * The Parser constructor creates a File variable which it passes to a new
      * instance of the Scanner class. It then loads the first token to be 
@@ -153,15 +152,17 @@ public class Parser {
             match(TokenType.VAR);
             //Get arraylist of variable names (Strings)
             varList = identifier_list();
-            //for every variable name add a new VariableNode to declarationsNode
+            
              
                         
             match(TokenType.COLON);
-//TODO Add variable type in DeclarationsNode 
+            //for every variable name add a new VariableNode to declarationsNode
             token = type();
             for (String s: varList){
-                decNode.addVars(new VariableNode(s));  
-                st.addVarName(s, token.toString());
+                VariableNode var = new VariableNode(s);
+                var.setType(token);
+                decNode.addVars(var);                
+                st.addVarName(s, token.toString());  
             }
             match(TokenType.SEMICOLON);
             //Call declarations() and get the next declarationNode if any
@@ -384,18 +385,22 @@ public class Parser {
             compound_statement();
         }//if currentToken is IF process if then else statement block
         else if (currentToken == TokenType.IF){
+            IfStatementNode state = new IfStatementNode();
             match(TokenType.IF);
-            expression();
+            state.setCondition( expression() );
             match(TokenType.THEN);
-            statement();
+            state.setStatements(statement() );
             match(TokenType.ELSE);
-            statement();
+            state.setElseStatment( statement() );
+            return state;
         }//if currentToken is while process while do statements
         else if (currentToken == TokenType.WHILE){
+            WhileStatementNode state = new WhileStatementNode();
             match(TokenType.WHILE);
-            expression();
+            state.setCondition( expression() );
             match(TokenType.DO);
-            statement();
+            state.setStatements( statement() );
+            return state;
         }
         else if (currentToken == TokenType.READ){
             match(TokenType.READ); // Treating as keyword for now
@@ -449,28 +454,46 @@ public class Parser {
         //Check for relop's <, >, <=, >=, <>, =. If found match and get next
         //simple expression
         if ( currentToken == TokenType.EQUALS){
+            OperationNode op = new OperationNode(currentToken);
+            op.setLeft(exp);
             match(TokenType.EQUALS);
-            simple_expression();
+            op.setRight( simple_expression() );
+            return op;
         }
         else if ( currentToken == TokenType.NOT_EQUAL){
+            OperationNode op = new OperationNode(currentToken);
+            op.setLeft(exp);
             match(TokenType.NOT_EQUAL);
-            simple_expression();
+            op.setRight( simple_expression() );
+            return op;
         }
         else if ( currentToken == TokenType.LESS_THAN){
+            OperationNode op = new OperationNode(currentToken);
+            op.setLeft(exp);
             match(TokenType.LESS_THAN);
-            simple_expression();
+            op.setRight( simple_expression() );
+            return op;
         }
         else if ( currentToken == TokenType.LESS_THAN_EQUALS){
+            OperationNode op = new OperationNode(currentToken);
+            op.setLeft(exp);
             match(TokenType.LESS_THAN_EQUALS);
-            simple_expression();
+            op.setRight( simple_expression() );
+            return op;
         }
         else if ( currentToken == TokenType.GREATER_THAN_EQUALS){
+            OperationNode op = new OperationNode(currentToken);
+            op.setLeft(exp);
             match(TokenType.GREATER_THAN_EQUALS);
-            simple_expression();
+            op.setRight( simple_expression() );
+            return op;
         }
         else if ( currentToken == TokenType.GREATER_THAN){
+            OperationNode op = new OperationNode(currentToken);
+            op.setLeft(exp);
             match(TokenType.GREATER_THAN);
-            simple_expression();
+            op.setRight( simple_expression() );
+            return op;
         }              
         return exp;
     }//end expression

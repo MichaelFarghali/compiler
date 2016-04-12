@@ -1,5 +1,6 @@
 
 package syntaxtree;
+import scanner.TokenType;
 
 /**
  * For now an empty parent node for ValueNode, VariableNode, and OperationNode
@@ -7,4 +8,5 @@ package syntaxtree;
  */
 public abstract class ExpressionNode extends SyntaxTreeNode {
     
+    TokenType type;
 }

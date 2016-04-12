@@ -157,7 +157,8 @@ public class Scanner {
                             || currentCharacter == '['
                             || currentCharacter == ']'
                             || currentCharacter == '('
-                            || currentCharacter == ')') {
+                            || currentCharacter == ')'
+                            || currentCharacter == '=') {
                         stateNumber = SYMBOL_COMPLETE;
                         currentLexeme += (char) currentCharacter;
                     } 
