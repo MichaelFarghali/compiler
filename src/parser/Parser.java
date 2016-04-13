@@ -2,11 +2,15 @@ package parser;
 
 import scanner.Scanner;
 import scanner.TokenType;
-import java.io.File;
-import java.util.Stack;
 import java.util.ArrayList;
 import symbol.table.SymbolTable;
 import syntaxtree.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+
 /**
  * The Parser class will eventually process a source file and create a parse
  * tree or reject the source as invalid using top down recursive descent
@@ -20,7 +24,7 @@ public class Parser {
     private Scanner scanner;  // The Scanner
     private TokenType currentToken;  // The TokenType variable 
     private SymbolTable st; //The symboltable
-    private Stack stack = new Stack();
+
     /**
      * The Parser constructor creates a File variable which it passes to a new
      * instance of the Scanner class. It then loads the first token to be 
@@ -79,7 +83,7 @@ public class Parser {
      * The program function also checks that there is no data after the period
      * @return The completed syntax tree processed by parser
      */
-    public ProgramNode program() {
+    public ProgramNode program() throws IOException{
         match(TokenType.PROGRAM);
         
         //add program name to symbol table
@@ -100,6 +104,38 @@ public class Parser {
         
         match(TokenType.PERIOD);
         System.out.println(st.myToString());
+        
+        BufferedWriter writer = null;
+        // Write the symbol table to file 'symboltable.txt'
+        try {
+            File file = new File("symboltable.txt");
+            FileWriter fwriter = new FileWriter(file);
+            writer = new BufferedWriter(fwriter);
+            
+            writer.write(st.myToString());
+        }
+        catch (IOException e) {
+            System.out.println("Failed writing to file.");
+        }
+        finally {
+            if (writer != null)
+                writer.close();
+        }
+        // Write the syntax tree to file 'syntax.tree'
+        try {
+            String fileName = "syntax.tree";
+            File file = new File(fileName);
+            FileWriter fwriter = new FileWriter(file);
+            writer = new BufferedWriter(fwriter);
+            writer.write(pNode.indentedToString(0));
+        }
+        catch (IOException e){
+            System.out.println("Failed writing to file: syntax.tree");
+        }
+        finally {
+            if (writer != null)
+                writer.close();
+        }
         
         //If there's still data in the file stream go to error
         if( currentToken != null){
