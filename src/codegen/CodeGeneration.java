@@ -1,6 +1,7 @@
 
 package codegen;
 import syntaxtree.*;
+import java.util.ArrayList;
 
 /**
  *
@@ -79,11 +80,17 @@ public class CodeGeneration {
         return null;
     }
     
-    public String writeCode(DeclarationsNode expNode, String reg)
-    {
-        String nodeCode;
+ 
+    public String writeDeclarations(ProgramNode pNode) {
+        String code = null;
+        DeclarationsNode decNode = pNode.getVariables();
+        ArrayList<VariableNode> list = decNode.getVars();
         
-        return null;
+        for(VariableNode v : list){
+            code += pNode.getName() + " " + v.getName() + ":\t.word\t0\n";
+        }
+        
+        return code;
     }
     
     public String writeCode(CompoundStatementNode node){
