@@ -9,6 +9,8 @@ import java.util.ArrayList;
  */
 public class CodeGeneration {
     
+    private int currentTRegister = 0;
+    
     public String writeCodeForRoot(ProgramNode root) 
     {
         StringBuilder code = new StringBuilder();
@@ -41,6 +43,18 @@ public class CodeGeneration {
         }        
         return code;
     }
+   
+    public String writeCode(AssignmentStatementNode node){
+        String code = null;
+        String assignment = node.getLvalue().getName();
+        String resultReg = "$t" + currentTRegister++;
+        
+        code += writeCode(node.getExpression(), resultReg );
+        code += "sw\t" + resultReg + ", \t" + assignment + "\n";
+        
+        currentTRegister = 0;
+        return code;
+    }
     
     public String writeCode(ExpressionNode node, String reg)
     {
@@ -71,15 +85,7 @@ public class CodeGeneration {
         
         code += "lw \t" + resultReg + ",    " + var + "\n";
         return code;
-    }
-    
-    
-    public String writeCode(AssignmentStatementNode stateNode){
-        String code = null;
-        
-        return null;
-    }
-    
+    }  
  
     public String writeDeclarations(ProgramNode pNode) {
         String code = null;
