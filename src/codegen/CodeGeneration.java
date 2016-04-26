@@ -20,12 +20,7 @@ public class CodeGeneration {
         return( code.toString() );
     }
     
-    public String writeCode(DeclarationsNode expNode, String reg)
-    {
-        String nodeCode;
-        
-        return null;
-    }
+    
     
     public String writeCode(StatementNode node, String reg)
     {
@@ -62,8 +57,31 @@ public class CodeGeneration {
         return code;
     }
     
+    private String writeCode(ValueNode node, String resultReg){
+        String value = node.getAttribute();
+        String code = "addi \t" + resultReg + ", \t$zero, \t" + value + "\n";
+        
+        return code;
+    }
+    
+    private String writeCode(VariableNode node, String resultReg){
+        String code = null;
+        String var = node.getName();
+        
+        code += "lw \t" + resultReg + ",    " + var + "\n";
+        return code;
+    }
+    
+    
     public String writeCode(AssignmentStatementNode stateNode){
         String code = null;
+        
+        return null;
+    }
+    
+    public String writeCode(DeclarationsNode expNode, String reg)
+    {
+        String nodeCode;
         
         return null;
     }
