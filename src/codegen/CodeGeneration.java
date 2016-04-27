@@ -1,10 +1,12 @@
 
 package codegen;
+import syntaxtree.*;
+import scanner.TokenType;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import syntaxtree.*;
 import java.util.ArrayList;
 
 /**
@@ -16,12 +18,14 @@ public class CodeGeneration {
     private int currentTRegister;
     private ProgramNode program;
     private String outputFile; 
+    private int suffix;
     
     
     public CodeGeneration(ProgramNode pNode){
         program = pNode;
         currentTRegister = 0;
         outputFile = program.getName() + ".asm";
+        suffix = 0;
     }
     
     public void writeFile() throws IOException{
@@ -106,11 +110,26 @@ public class CodeGeneration {
         return code;
     }
      
-    public String writeCode(IfStatementNode node){
-        
-        return null;
+    private String writeCode(IfStatementNode node){
+	String code = "";
+	ExpressionNode condition = node.getCondition();
+	StatementNode thenStatement = node.getStatement();
+	StatementNode elseStatement = node.getElseStatement();
+	String conditionRegister = "$t" + currentTRegister++;
+        String elseLabel = "elseif"+suffix;
+        String endIfLabel = "endif"+suffix++;                
+                
+        code += writeCode(condition, conditionRegister);
+	code += "beq\t" + conditionRegister + ",    $0,    " + elseLabel + "\n";
+	code += writeCode(thenStatement);
+	code += "j\t"+ elseLabel + "\n";
+	code += elseLabel + ":\n";
+	code += writeCode(elseStatement);
+        code += endIfLabel + ":\n";
+                
+	return code;
     }
-    
+
     public String writeCode(WhileStatementNode node){
         
         return null;
@@ -132,6 +151,50 @@ public class CodeGeneration {
         return code;
     }
     
+    private String writeCode(OperationNode node, String resultReg){
+        String code = "";
+        
+        // Set the left and right registers
+        ExpressionNode left = node.getLeft();
+        ExpressionNode right = node.getRight();
+        String leftReg = resultReg;
+        String rightReg = "$t" + currentTRegister++;
+        code += writeCode(left, leftReg);
+        code += writeCode(right, rightReg);
+        
+        // Set the approiate operation
+        TokenType op = node.getOperation();
+        if(op == TokenType.PLUS) { 
+            code += "add    " + resultReg + ",   " + leftReg +  ",   " 
+                    + rightReg + "\n";
+        }
+        if(op == TokenType.MINUS) {
+            code += "sub    " + resultReg + ",   " + leftReg +
+                    ",   " + rightReg + "\n";
+        }        
+        if(op == TokenType.MULTIPLY) {
+            code += "mult   " + leftReg + ",   " + rightReg + "\n";
+            code += "mflo   " + resultReg + "\n";
+        }
+        if(op == TokenType.DIVIDE) {
+            code += "div    " + leftReg + ",   " + rightReg + "\n";
+            code += "mflo   " + resultReg + "\n";
+        }
+        if(op == TokenType.MOD){
+            code += "div    " + leftReg + ",   " + rightReg + "\n";
+            code += "mfhi   " + resultReg + "\n";
+        }
+        if(op == TokenType.LESS_THAN){
+            code += "slt\t" + resultReg + ",   " + leftReg + ",\t"+ rightReg+"\n";
+	}
+        if(op == TokenType.GREATER_THAN){
+            code += "sgt\t" + resultReg + ",   " + leftReg + ",\t" + rightReg+"\n";
+        }
+        if(op == TokenType.EQUALS){
+            code += "seq\t" + resultReg + ",    " + leftReg + ",\t" +rightReg+"\n";
+        }
+        return code;
+    }
     private String writeCode(ValueNode node, String resultReg){
         String value = node.getAttribute();
         String code = "addi \t" + resultReg + ", \t$zero, \t" + value + "\n";
