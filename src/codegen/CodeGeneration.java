@@ -1,5 +1,9 @@
 
 package codegen;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import syntaxtree.*;
 import java.util.ArrayList;
 
@@ -9,21 +13,59 @@ import java.util.ArrayList;
  */
 public class CodeGeneration {
     
-    private int currentTRegister = 0;
+    private int currentTRegister;
+    private ProgramNode program;
+    private String outputFile; 
     
-    public String writeCodeForRoot(ProgramNode root) 
-    {
-        StringBuilder code = new StringBuilder();
-        code.append( ".data\n");
-        code.append( "answer:   .word   0\n\n\n");
-        code.append( ".text\n");
-        code.append( "main:\n");
-        
-       
-        return( code.toString() );
+    
+    public CodeGeneration(ProgramNode pNode){
+        program = pNode;
+        currentTRegister = 0;
+        outputFile = program.getName() + ".asm";
     }
     
+    public void writeFile() throws IOException{
+        String code;
+        code = ".data\n";
+        //Constant and variable declarations
+        code += writeDeclarations(program);
+        
+        // Assembly instructions
+        code += "\n \n.text\nmain: \n";
+        
+        // End of file
+        code += "li   $v0,    10\n";
+        code += "syscall\n";
+        
+        //Write to file
+        BufferedWriter writer = null;
+        // Write the code to "program name".asm
+        try {
+            File file = new File(outputFile);
+            FileWriter fwriter = new FileWriter(file);
+            writer = new BufferedWriter(fwriter);
+            
+            writer.write(code);
+        }
+        catch (IOException e) {
+            System.out.println("Failed writing to file.");
+        }
+        finally {
+            if (writer != null)
+                writer.close();
+        }
+    }
     
+    public String writeDeclarations(ProgramNode pNode) {
+        String code = "";
+        DeclarationsNode decNode = pNode.getVariables();
+        ArrayList<VariableNode> list = decNode.getVars();
+        
+        for(VariableNode v : list){
+            code += v.getName() + ":\t.word\t0\n";
+        }        
+        return code;
+    }
     
     public String writeCode(StatementNode node, String reg)
     {
@@ -86,19 +128,7 @@ public class CodeGeneration {
         code += "lw \t" + resultReg + ",    " + var + "\n";
         return code;
     }  
- 
-    public String writeDeclarations(ProgramNode pNode) {
-        String code = null;
-        DeclarationsNode decNode = pNode.getVariables();
-        ArrayList<VariableNode> list = decNode.getVars();
-        
-        for(VariableNode v : list){
-            code += pNode.getName() + " " + v.getName() + ":\t.word\t0\n";
-        }
-        
-        return code;
-    }
-    
+      
     public String writeCode(CompoundStatementNode node){
         String code = null;
         
