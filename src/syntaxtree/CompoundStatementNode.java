@@ -23,6 +23,10 @@ public class CompoundStatementNode extends StatementNode{
     public void addStatements(StatementNode states){
         statements.add(states);
     }
+    
+    public ArrayList<StatementNode> getStatements(){
+        return this.statements;
+    }
     /**
      * Adds a CompoundStatementNode to the syntax tree string
      * @param level The level of the syntax tree

@@ -32,9 +32,13 @@ public class CodeGeneration {
         
         // Assembly instructions
         code += "\n \n.text\nmain: \n";
+        CompoundStatementNode cs = program.getMain();
+        for(StatementNode s : cs.getStatements()){
+            code += writeCode(s);
+        }
         
         // End of file
-        code += "li   $v0,    10\n";
+        code += "addi\t$v0,   $zero,    10\n";
         code += "syscall\n";
         
         //Write to file
@@ -67,15 +71,19 @@ public class CodeGeneration {
         return code;
     }
     
-    public String writeCode(StatementNode node, String reg)
+    public String writeCode(StatementNode node)
     {
-        String code = null;
+        String code = "";
         
         if(node instanceof AssignmentStatementNode){
             code += writeCode((AssignmentStatementNode)node);
         }
         if(node instanceof CompoundStatementNode){
-            code += writeCode((CompoundStatementNode)node);
+            //Go through arraylist of statements and process each
+            for(StatementNode s : ((CompoundStatementNode)node).getStatements())
+            {
+                code += writeCode(s);
+            }
         }
         if(node instanceof IfStatementNode){
             code += writeCode((IfStatementNode)node);
@@ -85,9 +93,9 @@ public class CodeGeneration {
         }        
         return code;
     }
-   
+
     public String writeCode(AssignmentStatementNode node){
-        String code = null;
+        String code = "";
         String assignment = node.getLvalue().getName();
         String resultReg = "$t" + currentTRegister++;
         
@@ -97,10 +105,20 @@ public class CodeGeneration {
         currentTRegister = 0;
         return code;
     }
+     
+    public String writeCode(IfStatementNode node){
+        
+        return null;
+    }
+    
+    public String writeCode(WhileStatementNode node){
+        
+        return null;
+    }
     
     public String writeCode(ExpressionNode node, String reg)
     {
-        String code = null;
+        String code = "";
         
         if(node instanceof OperationNode){
             code += writeCode((OperationNode)node, reg);
@@ -122,26 +140,11 @@ public class CodeGeneration {
     }
     
     private String writeCode(VariableNode node, String resultReg){
-        String code = null;
+        String code;
         String var = node.getName();
         
-        code += "lw \t" + resultReg + ",    " + var + "\n";
+        code = "lw \t" + resultReg + ",    " + var + "\n";
         return code;
-    }  
-      
-    public String writeCode(CompoundStatementNode node){
-        String code = null;
-        
-        return null;
-    }
+    }       
     
-    public String writeCode(IfStatementNode node){
-        
-        return null;
-    }
-    
-    public String writeCode(WhileStatementNode node){
-        
-        return null;
-    }
 }

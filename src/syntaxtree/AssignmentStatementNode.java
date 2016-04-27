@@ -29,7 +29,14 @@ public class AssignmentStatementNode extends StatementNode{
     public void setExpression(ExpressionNode expression) {
         this.expression = expression;
     }
-    
+//TODO    
+    public VariableNode getLvalue(){
+        return this.lvalue;
+    }
+//TODO javadoc
+    public ExpressionNode getExpression(){
+        return this.expression;
+    }
         @Override
     public String toString() {
         return expression.toString();
