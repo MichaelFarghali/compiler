@@ -18,14 +18,14 @@ public class CodeGeneration {
     private int currentTRegister;
     private ProgramNode program;
     private String outputFile; 
-    private int suffix;
+    private int labelNumber;
     
     
     public CodeGeneration(ProgramNode pNode){
         program = pNode;
         currentTRegister = 0;
         outputFile = program.getName() + ".asm";
-        suffix = 0;
+        labelNumber = 0;
     }
     
     public void writeFile() throws IOException{
@@ -116,13 +116,13 @@ public class CodeGeneration {
 	StatementNode thenStatement = node.getStatement();
 	StatementNode elseStatement = node.getElseStatement();
 	String conditionRegister = "$t" + currentTRegister++;
-        String elseLabel = "elseif"+suffix;
-        String endIfLabel = "endif"+suffix++;                
+        String elseLabel = "elseif"+labelNumber;
+        String endIfLabel = "endif"+labelNumber++;                
                 
         code += writeCode(condition, conditionRegister);
 	code += "beq\t" + conditionRegister + ",    $0,    " + elseLabel + "\n";
 	code += writeCode(thenStatement);
-	code += "j\t"+ elseLabel + "\n";
+	code += "j\t"+ endIfLabel + "\n";
 	code += elseLabel + ":\n";
 	code += writeCode(elseStatement);
         code += endIfLabel + ":\n";
@@ -131,8 +131,21 @@ public class CodeGeneration {
     }
 
     public String writeCode(WhileStatementNode node){
+        String code = "";
+        ExpressionNode whileCondition = node.getCondition();
+        StatementNode whileStatement = node.getStatement();
+        String whileStart = "whilestart" + labelNumber;
+        String whileEnd = "whileend" + labelNumber++;
+        String conditionRegister = "$t" + currentTRegister;
         
-        return null;
+        code += whileStart + "\n";
+        code += writeCode(whileCondition, conditionRegister);
+        code += "beq\t" + conditionRegister + ",    $0,    " + whileEnd + "\n";
+        code += writeCode(whileStatement);
+        code += "j\t" + whileStart + "\n";
+        code += whileEnd + "\n";
+
+        return code;
     }
     
     public String writeCode(ExpressionNode node, String reg)
@@ -176,7 +189,7 @@ public class CodeGeneration {
             code += "mult   " + leftReg + ",   " + rightReg + "\n";
             code += "mflo   " + resultReg + "\n";
         }
-        if(op == TokenType.DIVIDE) {
+        if(op == TokenType.DIVIDE || op == TokenType.DIV) {
             code += "div    " + leftReg + ",   " + rightReg + "\n";
             code += "mflo   " + resultReg + "\n";
         }
@@ -185,13 +198,22 @@ public class CodeGeneration {
             code += "mfhi   " + resultReg + "\n";
         }
         if(op == TokenType.LESS_THAN){
-            code += "slt\t" + resultReg + ",   " + leftReg + ",\t"+ rightReg+"\n";
+            code += "slt\t" + resultReg + ",\t" + leftReg + ",\t"+ rightReg+"\n";
 	}
         if(op == TokenType.GREATER_THAN){
-            code += "sgt\t" + resultReg + ",   " + leftReg + ",\t" + rightReg+"\n";
+            code += "sgt\t" + resultReg + ",\t" + leftReg + ",\t" + rightReg+"\n";
         }
         if(op == TokenType.EQUALS){
-            code += "seq\t" + resultReg + ",    " + leftReg + ",\t" +rightReg+"\n";
+            code += "seq\t" + resultReg + ",\t" + leftReg + ",\t" +rightReg+"\n";
+        }
+        if(op == TokenType.NOT_EQUAL){
+            code += "sne\t" + resultReg + ",\t" + leftReg + ",\t" +rightReg+"\n";
+        }
+        if(op == TokenType.GREATER_THAN_EQUALS){
+            code += "sge\t" + resultReg + ",\t" + leftReg + ",\t"+rightReg+"\n";
+        }
+        if(op == TokenType.LESS_THAN_EQUALS){
+            code += "sle\t" + resultReg + ",\t" + leftReg + ",\t" + rightReg+"\n";
         }
         return code;
     }

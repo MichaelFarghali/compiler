@@ -27,6 +27,14 @@ public class WhileStatementNode extends StatementNode{
         this.statements = body;
     }   
     
+    public ExpressionNode getCondition(){
+        return this.condition;
+    }
+    
+    public StatementNode getStatement(){
+        return this.statements;
+    }
+    
      /**
      * Adds a while statement node to the syntax tree string
      * @param level The level of the syntax tree

@@ -36,10 +36,20 @@ public class IfStatementNode extends StatementNode{
      * @param statements 
      */
     public void setElseStatment(StatementNode statements){
-        this.elseStatement = statements;
-        
+        this.elseStatement = statements;        
     }
     
+    public ExpressionNode getCondition(){
+        return this.condition;
+    }
+    
+    public StatementNode getStatement(){
+        return this.statements;
+    }
+    
+    public StatementNode getElseStatement(){
+        return this.elseStatement;
+    }
     /**
      * Adds an If-Then-Else block to the syntax tree string
      * @param level The level of the syntax tree
