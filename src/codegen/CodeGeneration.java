@@ -147,7 +147,7 @@ public class CodeGeneration {
      * @param node An IfStatementNode
      * @return The code which executes 'if then else' conditional block
      */
-    private String writeCode(IfStatementNode node){
+    public String writeCode(IfStatementNode node){
 	String code = "";
 	ExpressionNode condition = node.getCondition();
 	StatementNode thenStatement = node.getStatement();
@@ -224,7 +224,7 @@ public class CodeGeneration {
      * @param resultReg The register where the result should be stored
      * @return Code that executes the operation
      */
-    private String writeCode(OperationNode node, String resultReg){
+    public String writeCode(OperationNode node, String resultReg){
         String code = "";
         
         // Set the left and right registers
@@ -284,7 +284,7 @@ public class CodeGeneration {
      * @param resultReg The register to store the value
      * @return Code that executes the value node
      */
-    private String writeCode(ValueNode node, String resultReg){
+    public String writeCode(ValueNode node, String resultReg){
         String value = node.getAttribute();
         String code = "addi \t" + resultReg + ", \t$zero, \t" + value + "\n";
         
@@ -297,7 +297,7 @@ public class CodeGeneration {
      * @param resultReg The register to store the variable
      * @return Code that executes the loading of a variable into a register
      */
-    private String writeCode(VariableNode node, String resultReg){
+    public String writeCode(VariableNode node, String resultReg){
         String code;
         String var = node.getName();
         
