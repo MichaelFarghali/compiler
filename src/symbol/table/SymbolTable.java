@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class SymbolTable {
     
-    Hashtable<String, DataStruct> table;// = new Hashtable<String, DataStruct>();
+    Hashtable<String, DataStruct> table;
     
     public SymbolTable(){
         table = new Hashtable<String, DataStruct>();

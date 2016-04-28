@@ -26,11 +26,17 @@ public class WhileStatementNode extends StatementNode{
     public void setStatements(StatementNode body){
         this.statements = body;
     }   
-    
+    /**
+     * Getter method
+     * @return The condition
+     */
     public ExpressionNode getCondition(){
         return this.condition;
     }
-    
+    /**
+     * Getter method
+     * @return the statement
+     */
     public StatementNode getStatement(){
         return this.statements;
     }

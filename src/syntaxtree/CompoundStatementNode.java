@@ -23,7 +23,10 @@ public class CompoundStatementNode extends StatementNode{
     public void addStatements(StatementNode states){
         statements.add(states);
     }
-    
+    /**
+     * Returns arraylist of statements
+     * @return Arraylist of statement nodes children
+     */
     public ArrayList<StatementNode> getStatements(){
         return this.statements;
     }

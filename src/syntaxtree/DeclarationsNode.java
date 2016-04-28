@@ -11,7 +11,7 @@ public class DeclarationsNode extends SyntaxTreeNode{
     private ArrayList<VariableNode> vars;
     
     public DeclarationsNode(){
-        this.vars = new ArrayList<VariableNode>();
+        this.vars = new ArrayList<>();
     }
     /**
      * Adds a VariableNode to ArrayList of variables

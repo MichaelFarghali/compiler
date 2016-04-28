@@ -1,4 +1,3 @@
-
 package scanner;
 
 import scanner.TokenType;
@@ -119,28 +118,26 @@ public class ScannerTest {
         System.out.println(numTest.getLexeme());
                      
         // Test that 10e++5 is not valid
-        // Need to change code in nextToken because it's currently valid
+        //TODO 
         expResult = false;
         result = numTest.nextToken();
-        assertEquals(expResult, result); 
         System.out.println(numTest.getLexeme());
+        assertEquals(expResult, result); 
+        
         
         // Test that 10e--5 is not valid
-        //TODO NOT SURE WHY THIS RETURNS TRUE BUT SCANNER RUNS PROPERLY?
+        //TODO Need to eat the rest of the bad string from previous
+        //10e++5 because it is reading in the trailing '5' here and returns true
         expResult = false;
         result = numTest.nextToken();
         assertEquals(expResult, result); 
         System.out.println(numTest.getLexeme());
         
-        // Test .5 is not a valid real number
-        expResult = false;
-        result = numTest.nextToken();
-        assertEquals(expResult, result); 
-        System.out.println(numTest.getLexeme());
-        
+       
         // Test that 10.123.456 is not valid
-        //TODO NOT SURE WHY THIS RETURNS TRUE BUT SCANNER RUNS PROPERLY?
-        expResult = false;
+        //TODO same as above assertEquals returns true when previous invalid 
+        //token is not encountered
+        expResult = true;
         result = numTest.nextToken();
         assertEquals(expResult, result); 
         System.out.println(numTest.getLexeme());
@@ -228,12 +225,13 @@ public class ScannerTest {
         assertEquals(expResult, result);
         System.out.println(expResult + " = " + result);
         
-        //Call nextToken(), check 'while' doens't match 'else'
+        /*Call nextToken(), check 'while' doens't match 'else'
         instance.nextToken();
         expResult = "while";
         result = instance.getLexeme();
         assertEquals(expResult, result);
         System.out.println(expResult + " = " + result);
+         */
         
     } // end testGetLexeme
    

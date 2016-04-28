@@ -18,7 +18,7 @@ public class ScanTest {
     public static void main(String[] args) {
 
         // Create a Scanner and point it at a file
-        Scanner s = new Scanner(new File("input.txt"));
+        Scanner s = new Scanner(new File("completeTest.txt"));
 
         // Set to true to start the while loop
         boolean thereIsAToken = true;

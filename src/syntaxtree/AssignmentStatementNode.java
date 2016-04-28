@@ -29,11 +29,17 @@ public class AssignmentStatementNode extends StatementNode{
     public void setExpression(ExpressionNode expression) {
         this.expression = expression;
     }
-//TODO    
+    /**
+     * Returns the left hand value of assignment 
+     * @return The left value
+     */
     public VariableNode getLvalue(){
         return this.lvalue;
     }
-//TODO javadoc
+    /**
+     * Returns the right hand side of assignment
+     * @return The right hand side of assignment operation
+     */
     public ExpressionNode getExpression(){
         return this.expression;
     }

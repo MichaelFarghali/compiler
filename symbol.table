@@ -1,0 +1,5 @@
+Name                 Kind                 Type            Array           Start Index           End Index
+dollars              VAR                  INTEGER         false           0              
+bitcoins             VAR                  REAL            false           0              
+yen                  VAR                  INTEGER         false           0              
+HelloWorld           PROGRAM              null            false           0              
