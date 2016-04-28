@@ -2,9 +2,10 @@ package parser;
 
 import scanner.Scanner;
 import scanner.TokenType;
-import java.util.ArrayList;
 import symbol.table.SymbolTable;
 import syntaxtree.*;
+
+import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -12,11 +13,10 @@ import java.io.IOException;
 
 
 /**
- * The Parser class will eventually process a source file and create a parse
- * tree or reject the source as invalid using top down recursive descent
- * parsing. For now it only recognizes valid tokens according to the production
- * rules
- *
+ * The Parser class processes a source file and creates a syntax tree and symbol
+ * table or rejects the source as invalid using top down recursive descent 
+ * parsing. The symbol table and syntax tree get written to files syntax.tree
+ * and symbol.table respectively.
  * @author Michael Farghali
  */
 public class Parser {
@@ -50,8 +50,6 @@ public class Parser {
      * production rules
      */
     public void match(TokenType expectedToken) {
-        //System.out.println("match " + expectedToken + " with current " + 
-            //   currentToken + ":" + scanner.getLexeme());
         if (currentToken == expectedToken) {
             boolean scanResult = scanner.nextToken();
             // If there's a next token assigne to currentToken
@@ -60,7 +58,6 @@ public class Parser {
             } 
             //If scanner.nextToken returns false check for EOF or invalid token
             else {
-                //System.out.println("No Token Available");
                 String lexeme = scanner.getLexeme(); //Check if string is null
                 if (lexeme == null) {
                     System.out.println("Parser: End of file");
@@ -103,20 +100,19 @@ public class Parser {
         pNode.setMain( compound_statement() );       
         
         match(TokenType.PERIOD);
-        System.out.println(st.myToString());
-        
+        System.out.println(st.myToString());        
         
         BufferedWriter writer = null;
-        // Write the symbol table to file 'symboltable.txt'
+        // Write the symbol table to file 'symbol.table'
         try {
-            File file = new File("symboltable.txt");
+            File file = new File("symbol.table");
             FileWriter fwriter = new FileWriter(file);
             writer = new BufferedWriter(fwriter);
             
             writer.write(st.myToString());
         }
         catch (IOException e) {
-            System.out.println("Failed writing to file.");
+            System.out.println("Failed writing to file: symbol.table\n");
         }
         finally {
             if (writer != null)
@@ -131,7 +127,7 @@ public class Parser {
             writer.write(pNode.indentedToString(0));
         }
         catch (IOException e){
-            System.out.println("Failed writing to file: syntax.tree");
+            System.out.println("Failed writing to file: syntax.tree\n");
         }
         finally {
             if (writer != null)
@@ -156,7 +152,6 @@ public class Parser {
         ArrayList<String> variables = new ArrayList<>();
         //Get the name of variable and add to symbol table
         var = scanner.getLexeme();
-        //st.addVarName(var);
         //Add variable name to ArrayList
         variables.add(var);
         
@@ -165,7 +160,6 @@ public class Parser {
         while (currentToken == TokenType.COMMA) {
             match(TokenType.COMMA);
             var = scanner.getLexeme();
-            //st.addVarName(var);            
             variables.add(var);            
             match(TokenType.ID);            
         }
@@ -177,8 +171,7 @@ public class Parser {
      *                            lambda
      * @return A DeclarationNode containing any declared variables
      */
-    public DeclarationsNode declarations() {
-        
+    public DeclarationsNode declarations() {        
         DeclarationsNode decNode = new DeclarationsNode();
         ArrayList<String> varList = new ArrayList<>();
         ArrayList<VariableNode> moreVars= new ArrayList<>();
@@ -188,9 +181,7 @@ public class Parser {
         if (currentToken == TokenType.VAR) {
             match(TokenType.VAR);
             //Get arraylist of variable names (Strings)
-            varList = identifier_list();
-            
-             
+            varList = identifier_list();             
                         
             match(TokenType.COLON);
             //for every variable name add a new VariableNode to declarationsNode
@@ -209,20 +200,20 @@ public class Parser {
             for (VariableNode v: moreVars){
                 decNode.addVars(v);
             }                      
-        }        
-       
+        }               
         return decNode;
     }//end declarations
 
     /**
      * Implements type -&gt; standard_type |
      *                    array[num : num] of standard_type
+     * @return The TokenType of variable
      */
     public TokenType type() {
         TokenType type;
         // Check if there is an array being declared
         if ( currentToken == TokenType.ARRAY){
-            //Add array name to symbol table
+//TODO Add array name to symbol table
             //st.addArrayName(scanner.getLexeme());
            
             match(TokenType.ARRAY);
@@ -241,6 +232,7 @@ public class Parser {
     
     /**
      * Implements standard_type -&gt; integer | real
+     * @return The data type of variable (integer or real)
      */
     public TokenType standard_type() {
         TokenType type;
@@ -257,6 +249,7 @@ public class Parser {
     /**
      * Implements subprogram_declarations -&gt; subprogram_declaration;
      *                                       subprogram_declarations | lambda
+     * @return A function or procedure statement node
      */
     public SubProgramDeclarationsNode subprogram_declarations() {
         
@@ -338,16 +331,16 @@ public class Parser {
 
     /**
      * Implements compound_statement -&gt; begin optional_statements end
+     * @return A compound statement node
      */
     public CompoundStatementNode compound_statement() {
-        //System.out.println("In compound statement");
         ArrayList<StatementNode> statements = new ArrayList<>();
         CompoundStatementNode csNode = new CompoundStatementNode();
         match(TokenType.BEGIN);
         statements = optional_statements();
+        // For every statement add it to arraylist in compound statement node
         for (StatementNode s: statements){
             csNode.addStatements(s);
-//            System.out.println(s.toString());
         }
         match(TokenType.END);
         
@@ -357,9 +350,9 @@ public class Parser {
     /**
      * Implements optional_statements -&gt; statement_list | lambda
      * lambda.
+     * @return An arraylist of statements
      */
     public ArrayList<StatementNode> optional_statements() {
-        //System.out.println("In optional statements");
         ArrayList<StatementNode> list = new ArrayList<>();
         //If currentToken is a variable id, if, while, read, or write statement
         //go to statement_list
@@ -376,9 +369,9 @@ public class Parser {
     
     /**
      * Implements statement_list -&gt; statement | statement ; statement_list
+     * @return An arraylist of statements
      */
     public ArrayList<StatementNode> statement_list(){
-        //System.out.println("In statement_list");
         ArrayList<StatementNode> state = new ArrayList<>();
         ArrayList<StatementNode> statements = new ArrayList<>();
         statements.add( statement() );
@@ -401,9 +394,10 @@ public class Parser {
      *                         if expression then statement else statement |
      *                         while expression do statement |
      *                         read | write (read, write currently treated as id)
+     * @return A child node of statement node
      */
     public StatementNode statement(){
-        //System.out.println("In statement");
+        
         AssignmentStatementNode statement = new AssignmentStatementNode();
         //If TokenType is type ID then check SymbolTable if it's a variable 
         //or a procedure ID 
@@ -472,9 +466,9 @@ public class Parser {
     
     /**
      * Implements variable -&gt; id | id [expression]
+     * @return A variable node
      */
     public VariableNode variable(){
-        //System.out.println("In variable");
         VariableNode var;
         var = new VariableNode( scanner.getLexeme() );
         match(TokenType.ID);
@@ -489,9 +483,9 @@ public class Parser {
     /**
      * Implements expression -&gt; simple_expression | 
      *                          simple_expression relop simple_expression
+     * @return The child node of an expression node
      */
     public ExpressionNode expression(){
-        //System.out.println("In expression");
         ExpressionNode exp; 
         exp = simple_expression(); 
        
@@ -544,13 +538,13 @@ public class Parser {
     
     /**
      * Implements simple_expression -&gt; term simple_part | lambda
+     * @return The child node of an expression node
      */
     public ExpressionNode simple_expression(){
-        //System.out.println("In simple_expression");
         ExpressionNode exp;
-        
-         if( currentToken == TokenType.PLUS ||
-             currentToken == TokenType.MINUS){
+        // Check for signed integers or reals
+        if( currentToken == TokenType.PLUS ||
+            currentToken == TokenType.MINUS){
             
             sign();
             exp = term();
@@ -580,8 +574,7 @@ public class Parser {
                 op.setRight(right);
                 exp = op;
             }            
-        }        
-    
+        }            
     return exp;
     }//end simple_expression
     
@@ -592,7 +585,6 @@ public class Parser {
      * @return An OperationNode representing +, -, OR
      */
     public OperationNode addop(){
-        //System.out.println("In addop");
         OperationNode op = new OperationNode(currentToken);
         //Match one of the addops +, -, OR 
         if (currentToken == TokenType.PLUS) {
@@ -604,8 +596,9 @@ public class Parser {
         else if (currentToken == TokenType.OR) {
             match(TokenType.OR);
         }
-        else {
-            System.out.println("Error in addop "+currentToken+"not expected.");
+        // If none of above print error message and go to error state
+        else { 
+            System.out.println("Error in addop "+currentToken+" not expected.");
             error();
         }
         return op;
@@ -613,9 +606,9 @@ public class Parser {
     
     /**
      * Implements term -&gt; factor | factor mulop factor
+     * @return The child of an expression node
      */
     public ExpressionNode term(){
-        //System.out.println("In term");
         
         ExpressionNode exp = factor();
         //While there is another mulop mulitplication create new OperationNode
@@ -643,7 +636,6 @@ public class Parser {
      * @return An OperationNode representing *, /, mod, DIV, AND
      */
     public OperationNode mulop(){
-        //System.out.println("In mulop");
         OperationNode op = new OperationNode(currentToken);
         //Create the operation node to be returned
         if ( currentToken == TokenType.MULTIPLY) {
@@ -661,8 +653,10 @@ public class Parser {
         else if (currentToken == TokenType.AND) {
             match(TokenType.AND);
         }
+        // If not a mulop print error message and go to error state
         else{
-            System.out.println("Error in mulop " +currentToken+" not expected.");
+            System.out.println("Error in mulop "+currentToken+" not expected.");
+            error();
         }
         return op;
     }//end mulop   
@@ -670,9 +664,9 @@ public class Parser {
     /**
      * Implements factor -&gt; id | id[expression] | id(expression_list) | num |
      *                      (expression) | not factor
+     * @return The child node of expression node
      */
     public ExpressionNode factor(){
-        //System.out.println("In factor");
         //If ID or ID[expression] or ID(expression_list) then match accordingly
         if( currentToken == TokenType.ID){
             VariableNode var = new VariableNode( scanner.getLexeme() );
@@ -682,28 +676,33 @@ public class Parser {
                 match(TokenType.L_BRACKET);
                 expression();
                 match(TokenType.R_BRACKET);
-            }//If id(expression) match parenthesis and go to expression_list
+            }
+            //If id(expression) match parenthesis and go to expression_list
             else if ( currentToken == TokenType.L_PARENTHESES){
                 match(TokenType.L_PARENTHESES);
                 expression_list();
                 match(TokenType.R_PARENTHESES);
             }
             return var;
-        }//If num then match the number
+        }
+        //If num then match the number
         else if( currentToken == TokenType.NUM){
             ValueNode value = new ValueNode( scanner.getLexeme() );
             match(TokenType.NUM);
             return value;
-        }//If (expression) match parenthesis and go to expression
+        }
+        //If (expression) match parenthesis and go to expression
         else if( currentToken == TokenType.L_PARENTHESES){
             match(TokenType.L_PARENTHESES);
             ExpressionNode exp = expression();
             match(TokenType.R_PARENTHESES);
             return exp;
-        }//if not match and make recursive call to factor
+        }
+        //if not match and make recursive call to factor
         else if( currentToken == TokenType.NOT){
             match(TokenType.NOT);
             factor();
+//TODO
             return null;
         }//For anything else go to error
         else{
@@ -716,7 +715,6 @@ public class Parser {
      * Implements -&gt; expression | expression, expression_list
      */
     public void expression_list(){
-        //System.out.println("In expression_list");
         expression();
         //If theres a comma after expression call expression again
         if (currentToken == TokenType.COMMA){
@@ -729,7 +727,6 @@ public class Parser {
      * Implements sign - &gt; + | -
      */
     public void sign(){
-        //System.out.println("In sign");
         if ( currentToken == TokenType.PLUS)
             match(TokenType.PLUS);
         else
@@ -747,6 +744,10 @@ public class Parser {
         System.exit(1);
     }//end error
     
+    /**
+     * Prints out an error message if a variable is attempting to be used 
+     * without being declared first but does not call system.exit()
+     */
     public void undeclaredVarError(){
         System.out.println("Warning: " + scanner.getLexeme() + " not declared on"
                 + " on line " + scanner.getCount());
