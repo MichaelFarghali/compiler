@@ -1,0 +1,18 @@
+program HelloWorld;
+
+var dollars, yen : integer;
+var bitcoins : real;
+
+
+begin
+
+dollars := 100;
+
+if dollars <= 100
+then
+    yen := 25
+else
+    bitcoins := 30
+
+end
+.

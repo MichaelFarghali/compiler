@@ -1,16 +1,46 @@
-"Failed writing to file: " + outputFile  codegen
+\documentclass[10]{article}
+\usepackage{graphicx}
 
-"Scanner barfed on " + lexeme  Parser
-"Failed writing to file: symbol.table"
-Failed writing to file: syntax.tree"
-"File not empty"
-"Error in addop "+currentToken+" not expected."
 
-("error: Line " + scanner.getCount()+" No match found"
-+ " for: " + scanner.getLexeme() 
+%opening
+\title{User Manual}
+\author{Michael Farghali}
 
-"Warning: " + scanner.getLexeme() + " not declared on"
-+ " on line " + scanner.getCount
+\begin{document}
+	
+	\maketitle	
+	
+\section*{How to use: }
 
-In scanner getnextchar pushbackchar
-There was a problem reading from file"
+To use the mini Pascal Compiler go to the directory with the FarghaliCompiler.jar file. In that directory
+type\\ \\
+ java -jar CompilerFarghali.jar \textit{yourfilename.asm}
+
+
+
+\section*{Error Messages}
+
+The compiler was unable to write to file. Check the filename.\\
+"Failed writing to file: filename"\\
+
+There is an invalid string or ID name in the source code. \\
+"Scanner barfed on 'some string' \\
+
+Couldn't write the symbol table to file. \\
+"Failed writing to file: symbol.table"\\
+
+Couldn't write the syntax tree to file. \\
+Failed writing to file: syntax.tree" \\
+
+An arithmetic operator was expected next but there wasn't one.\\
+"Error in addop 'some token' not expected."\\
+
+There is a syntax error in the source code.\\
+"error: Line 'line number'  No match found for: 'some string'"\\
+
+An undeclared variable is attempting to be used. \\
+"Warning: \textit{some variable} not declared on 'line number' "
+
+
+
+\end{document}
